@@ -9,8 +9,8 @@ from fastapi import Request, Response
 from starlette.routing import Match
 from user_agents import parse
 
-from __system__.schemas import dataLogs
-from __system__.repositories import LogsRepository
+from app.schemas.__system__.logs import dataLogs
+from app.repositories.__system__.logs import LogsRepository
 
 
 class LogServices:
