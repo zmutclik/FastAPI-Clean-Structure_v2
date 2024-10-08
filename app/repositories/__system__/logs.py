@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from app.core.db.logs import get_db
-from app.models.__system__.logs import TableLogs as MainTable
+from __system__.models import TableLogs as MainTable
 
 
 class LogsRepository:
