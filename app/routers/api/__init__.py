@@ -1,5 +1,5 @@
-from .token import router as routerToken
+from .__system__.token import router as token
 
 __all__ = [
-    "routerToken",
+    "token",
 ]

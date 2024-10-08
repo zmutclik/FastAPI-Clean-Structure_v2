@@ -42,7 +42,7 @@ class RABBITMQConfig(BaseSettings):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
-    APP_NAME: str = Field("FastAPI-Clean-Structure")
+    APP_NAME: str = Field("FastAPI-Structure")
     APP_DESCRIPTION: str = Field("This is a very fancy project, with auto docs for the API and everything.")
     APP_VERSION: str = "0.001"
 

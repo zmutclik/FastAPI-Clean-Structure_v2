@@ -7,9 +7,9 @@ from app.helpers import getJSON
 from app.core import config
 
 # from core import LogServices, main_logs, main_auth, routers_page as core_page
+from app.services.__system__ import LogServices
 
-
-from app.routers import api
+from app.routers import api, pages, default as routerDefault
 
 
 def create_app() -> FastAPI:
@@ -43,27 +43,30 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="files/static", html=False), name="static")
 
 ### MAIN API ###
-app.include_router(api.routerToken)
+app.include_router(routerDefault.router)
+app.include_router(api.token)
 
-### MAIN PAGE ###
-# app.include_router(routers_page.dashboardPageRouter)
-# app.include_router(core_page.userPage.router)
+## MAIN PAGE ###
+app.include_router(pages.loginPage)
+app.include_router(pages.userPage)
+app.include_router(pages.dashboardPage)
+
 
 ###################################################################################################################
-# @app.middleware("http")
-# async def add_process_time_header(request: Request, call_next):
-#     logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
-#     await logs.start(request)
-#     response = await call_next(request)
-#     await logs.finish(request, response)
-#     return response
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
+    await logs.start(request)
+    response = await call_next(request)
+    await logs.finish(request, response)
+    return response
 
 
 # ###################################################################################################################
-# from fastapi.responses import RedirectResponse
-# from app.helpers.Exceptions import RequiresLoginException
+from fastapi.responses import RedirectResponse
+from app.helpers.Exceptions import RequiresLoginException
 
 
-# @app.exception_handler(RequiresLoginException)
-# async def requires_login(request: Request, _: Exception):
-#     return RedirectResponse(_.nextRouter)
+@app.exception_handler(RequiresLoginException)
+async def requires_login(request: Request, _: Exception):
+    return RedirectResponse(_.nextRouter)
