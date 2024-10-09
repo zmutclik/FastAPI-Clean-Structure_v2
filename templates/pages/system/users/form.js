@@ -8,10 +8,10 @@ var form_ = $("#form_").validate({
         },
         limit_expires: { number: true },
     },
-    errorElement: 'span',
+    errorElement: 'div',
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
-        element.closest('.input-group').append(error);
+        element.after(error);
     },
     highlight: function (element, errorClass, validClass) {
         $(element).addClass('is-invalid');
@@ -41,8 +41,7 @@ $(document).ready(function () {
                 .then(function (response) {
                 })
                 .catch(function (error) {
-                    console.log(error);
-                    if (error.status == 401) {
+                    if (error.status == 401 || error.status == 400) {
                         Swal.fire({
                             position: "top-end",
                             icon: "error",
@@ -51,13 +50,13 @@ $(document).ready(function () {
                             timer: 2000
                         });
                     }
-
-                    form_.showErrors({
-                        "full_name": "",
-                        "username": "",
-                        "email": "",
-                        "limit_expires": "",
-                    });
+                    if (error.status == 422) {
+                        de = {}
+                        $.each(error.response.data.detail, function (i, v) {
+                            de[v.loc[1]] = v["msg"];
+                        });
+                        form_.showErrors(de);
+                    }
                 })
                 .finally(() => {
                     $("#form_").LoadingOverlay("hide");

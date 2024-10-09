@@ -125,9 +125,9 @@ async def create_user(
 
     userrepo = UsersRepository(db)
     if userrepo.get(dataIn.username):
-        raise HTTPException(status_code=400, detail="Username has Used.")
+        raise HTTPException(status_code=400, detail="USERNAME sudah ada yang menggunakan.")
     if userrepo.getByEmail(dataIn.email):
-        raise HTTPException(status_code=400, detail="Email has Used.")
+        raise HTTPException(status_code=400, detail="EMAIL sudah ada yang menggunakan.")
 
     data = UserSave.model_validate(dataIn.model_dump())
     data.created_user = current_user.username
