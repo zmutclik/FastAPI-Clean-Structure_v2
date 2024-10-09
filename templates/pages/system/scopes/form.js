@@ -1,12 +1,7 @@
 var form_ = $("#form_").validate({
     rules: {
-        full_name: { required: true },
-        username: { required: true },
-        email: {
-            required: true,
-            email: true,
-        },
-        limit_expires: { number: true },
+        scope: { required: true },
+        desc: { required: true },
     },
     errorElement: 'div',
     errorPlacement: function (error, element) {
@@ -21,10 +16,10 @@ var form_ = $("#form_").validate({
     },
 });
 $(document).ready(function () {
-    $("#form_ input[name='full_name']").focus();
+    $("#form_ input[name='scope']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/users/';
+        window.location.href = '/page/scopes/';
     });
 
     $("#form_").on("submit", function () {
@@ -33,16 +28,14 @@ $(document).ready(function () {
             $("#form_").LoadingOverlay("show");
 
             api.post('', {
-                "full_name": $("#form_ input[name='full_name']").val(),
-                "username": $("#form_ input[name='username']").val(),
-                "email": $("#form_ input[name='email']").val(),
-                "limit_expires": $("#form_ input[name='limit_expires']").val(),
+                "scope": $("#form_ input[name='scope']").val(),
+                "desc": $("#form_ input[name='desc']").val(),
             })
                 .then(function (response) {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '/page/scopes/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {

@@ -49,6 +49,7 @@ app.include_router(api.token)
 ## MAIN PAGE ###
 app.include_router(pages.loginPage)
 app.include_router(pages.userPage)
+app.include_router(pages.scopePage)
 app.include_router(pages.dashboardPage)
 
 
