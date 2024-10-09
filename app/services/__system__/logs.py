@@ -63,7 +63,7 @@ class LogServices:
         )
         return request
 
-    async def finish(self, request: Request, response: Response):
+    def finish(self, request: Request, response: Response):
         self.data.username = request.state.username
         self.data.status_code = response.status_code
         self.data.process_time = time.time() - self.startTime

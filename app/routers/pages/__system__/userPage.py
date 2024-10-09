@@ -1,36 +1,34 @@
 from typing import Annotated, Union, Any, Literal
 from enum import Enum
+import datetime
 
-from fastapi import APIRouter, Request, Response, Cookie, Security, Depends, HTTPException, status
-from fastapi.responses import HTMLResponse
-from starlette.responses import FileResponse, PlainTextResponse
+from fastapi import APIRouter, Request, Security, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
 
-from app.core import config
 from app.core.db.auth import engine_db, get_db
-from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import page_get_current_active_user as get_user_active
-from app.models.__system__ import auth
 from app.schemas import TemplateResponseSet
-from app.repositories.__system__.auth import UsersRepository
 
-from sqlalchemy import select
-
-from datatables import DataTable
 
 router = APIRouter(
     prefix="/page/users",
     tags=["FORM"],
 )
+
 templates = Jinja2Templates(directory="templates")
-path_template = "page/system/users/"
+path_template = "pages/system/users/"
 
 
 class PathJS(str, Enum):
     indexJs = "index.js"
     formJs = "form.js"
+
+
+###PAGES###############################################################################################################
+from fastapi.responses import HTMLResponse
+from app.repositories.__system__.auth import UsersRepository
+from app.schemas.__system__.auth import UserSchemas
+from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -42,7 +40,14 @@ def page_system_users(
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
-def page_system_users_form(cId: str, sId: str, req: Request, c_user: Annotated[UserSchemas, Depends(get_user_active)]):
+def page_system_users_form(
+    cId: str,
+    sId: str,
+    req: Request,
+    c_user: Annotated[UserSchemas, Depends(get_user_active)],
+):
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
     return TemplateResponseSet(templates, path_template + "form", req, cId, sId)
 
 
@@ -55,29 +60,118 @@ def page_system_users_form(
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
     db: Session = Depends(get_db),
 ):
-    return TemplateResponseSet(templates, path_template + "form", req, cId, sId, data={"user": UsersRepository(db).getById(id)})
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
+    return TemplateResponseSet(
+        templates,
+        path_template + "form",
+        req,
+        cId,
+        sId,
+        data={"user": UsersRepository(db).getById(id)},
+    )
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
     return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
 
 
-@router.post("/{clientId}/{sessionId}/datatables", status_code=201, include_in_schema=False)
+###DATATABLES##########################################################################################################
+from app.models.__system__ import auth
+from sqlalchemy import select
+from datatables import DataTable
+
+
+@router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
 def get_datatable_result(
     params: dict[str, Any],
-    clientId: str,
-    sessionId: str,
+    cId: str,
+    sId: str,
     request: Request,
 ) -> dict[str, Any]:
-    if request.state.clientId == clientId and request.state.sessionId == sessionId:
-        datatable: DataTable = DataTable(
-            request_params=params,
-            table=select(auth.UsersTable, auth.UsersTable.id.label("DT_RowId")),
-            column_names=["DT_RowId", "id", "username", "email", "full_name"],
-            engine=engine_db,
-            # callbacks=callbacks,
-        )
-        return datatable.output_result()
-    else:
+    if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
+
+    query = select(auth.UsersTable, auth.UsersTable.id.label("DT_RowId")).where(auth.UsersTable.deleted_at == None)
+
+    datatable: DataTable = DataTable(
+        request_params=params,
+        table=query,
+        column_names=["DT_RowId", "id", "username", "email", "full_name"],
+        engine=engine_db,
+        # callbacks=callbacks,
+    )
+    return datatable.output_result()
+
+
+###CRUD################################################################################################################
+from app.schemas.__system__.auth import UserResponse, UserSave, UserEdit, UserDataIn
+
+
+@router.post("/{cId}/{sId}", response_model=UserResponse, status_code=201, include_in_schema=False)
+async def create_user(
+    dataIn: UserDataIn,
+    cId: str,
+    sId: str,
+    req: Request,
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    db: Session = Depends(get_db),
+):
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
+
+    userrepo = UsersRepository(db)
+    if userrepo.get(dataIn.username):
+        raise HTTPException(status_code=400, detail="Username has Used.")
+    if userrepo.getByEmail(dataIn.email):
+        raise HTTPException(status_code=400, detail="Email has Used.")
+
+    data = UserSave.model_validate(dataIn.model_dump())
+    data.created_user = current_user.username
+    return userrepo.create(data.model_dump())
+
+
+@router.post("/{cId}/{sId}/{idUser}", response_model=UserResponse, status_code=202, include_in_schema=False)
+async def update_user(
+    dataIn: UserDataIn,
+    idUser: int,
+    cId: str,
+    sId: str,
+    req: Request,
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    db: Session = Depends(get_db),
+):
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
+
+    userrepo = UsersRepository(db)
+    dataUser = userrepo.getById(idUser)
+    if dataUser is None:
+        raise HTTPException(status_code=400, detail="Data Tida ada.")
+
+    data = UserEdit.model_validate(dataIn.model_dump())
+    data.updated_at = datetime.datetime.now()
+    return userrepo.update(idUser, data.model_dump())
+
+
+@router.delete("/{cId}/{sId}/{idUser}", response_model=UserResponse, status_code=202, include_in_schema=False)
+async def delete_user(
+    idUser: int,
+    cId: str,
+    sId: str,
+    req: Request,
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    db: Session = Depends(get_db),
+):
+    if req.state.clientId != cId or req.state.sessionId != sId:
+        raise HTTPException(status_code=404)
+
+    userrepo = UsersRepository(db)
+    dataUser = userrepo.getById(idUser)
+    if dataUser is None:
+        raise HTTPException(status_code=400, detail="Data Tida ada.")
+
+    return userrepo.update(idUser, {"deleted_at": datetime.datetime.now(), "deleted_user": current_user.username})

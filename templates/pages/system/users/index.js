@@ -1,5 +1,7 @@
+
+var oTable;
 $(document).ready(function () {
-    $('#table_').DataTable({
+    oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
             "url": '/page/users/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
@@ -39,5 +41,25 @@ $(document).ready(function () {
 
     $("#table_").on("click", '.btnEdit', function () {
         window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+    });
+
+    $("#table_").on("click", '.btnDelete', function () {
+        var fullname = $(this).parents('tr').find("td:nth-child(3)").html();
+        var idUser = $(this).parents('tr').attr('id');
+        Swal.fire({
+            title: 'Apakah anda YAKIN ingin menghapus User ini "' + fullname + '"?',
+            showCancelButton: true,
+            confirmButtonText: "Ya HAPUS",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                api.delete(idUser)
+                    .then(function () {
+                        Swal.fire("Terhapus!", "", "success")
+                            .then(() => {
+                                oTable.ajax.reload();
+                            });
+                    })
+            }
+        });
     });
 });

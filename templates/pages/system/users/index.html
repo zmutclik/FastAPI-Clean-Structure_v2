@@ -82,7 +82,19 @@
 <script src="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 <!-- ------------------- -->
+<script>
+    const api = axios.create({
+        baseURL: '/page/users/{{clientId}}/{{sessionId}}',
+        timeout: 2000,
+        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
+    });
+</script>
 <script src="/page/users/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
 
 {% endblock javascripts %}

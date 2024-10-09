@@ -20,7 +20,7 @@ class UserSave(UserDataIn):
 class UserEdit(UserDataIn):
     full_name: str
     limit_expires: Optional[int] = 30
-    updated_at: Optional[str] = None
+    updated_at: Optional[datetime] = None
 
 
 class UserSchemas(UserSave):

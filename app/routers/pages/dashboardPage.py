@@ -26,7 +26,7 @@ def dashboard(
 ):
     return templates.TemplateResponse(
         request=request,
-        name="page/dashboard/index2.html",
+        name="pages/dashboard/index2.html",
         context={
             "app_name": config.APP_NAME,
             "clientId": request.state.clientId,

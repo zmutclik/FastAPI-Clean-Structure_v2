@@ -94,11 +94,13 @@ async def page_get_current_active_user(request: Request):
             return user
 
 
-def create_user_access_token(db: Session, userModel, userScope) -> str:
+def create_user_access_token(db: Session, userModel, userScope, timeout: int = None) -> str:
     user_scope = verify_scope(userModel.id, userScope, db)
+    if timeout is None:
+        timeout = userModel.limit_expires
     access_token = create_access_token(
         data={"sub": userModel.username, "scopes": user_scope},
-        expires_delta=timedelta(minutes=userModel.limit_expires),
+        expires_delta=timedelta(minutes=timeout),
     )
     return access_token
 
@@ -107,5 +109,5 @@ def create_cookie_access_token(db: Session, response: Response, userModel):
     userScope = []
     for item in ScopesRepository(db).getScopesUser(userModel.id):
         userScope.append(item.scope)
-    access_token = create_user_access_token(db, userModel, userScope)
+    access_token = create_user_access_token(db, userModel, userScope, config.ACCESS_TOKEN_EXPIRE_MINUTES)
     response.set_cookie(key=config.TOKEN_KEY, value=access_token)

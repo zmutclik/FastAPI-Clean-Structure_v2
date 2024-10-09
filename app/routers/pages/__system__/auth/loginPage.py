@@ -16,29 +16,29 @@ from app.services.__system__.auth import authenticate_user, create_cookie_access
 from app.schemas.__system__.auth import loginSchemas
 
 router = APIRouter(
-    prefix="",
+    prefix="/auth",
     tags=["FORM"],
 )
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/login", response_class=HTMLResponse)
+@router.get("/login", response_class=HTMLResponse, include_in_schema=False)
 def form_login(request: Request, next: str = None):
     return templates.TemplateResponse(
         request=request,
-        name="page/auth/login/login.html",
+        name="pages/auth/login/login.html",
         context={"app_name": config.APP_NAME, "clientId": request.state.clientId, "sessionId": request.state.sessionId, "nextpage": next},
     )
 
 
-@router.get("/{clientId}/{sessionId}/login.js")
+@router.get("/{clientId}/{sessionId}/login.js", include_in_schema=False)
 def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
     if next is None:
         next = "/page/dashboard"
     if request.state.clientId == clientId and request.state.sessionId == sessionId:
         return templates.TemplateResponse(
             request=request,
-            name="page/auth/login/login.js",
+            name="pages/auth/login/login.js",
             media_type="application/javascript",
             context={"clientId": request.state.clientId, "sessionId": request.state.sessionId, "nextpage": next},
         )
@@ -46,7 +46,7 @@ def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
         raise HTTPException(status_code=404)
 
 
-@router.post("/{clientId}/{sessionId}/login", status_code=201)
+@router.post("/{clientId}/{sessionId}/login", status_code=201, include_in_schema=False)
 def post_login(
     dataIn: loginSchemas,
     request: Request,
@@ -55,7 +55,6 @@ def post_login(
 ):
     userrepo = UsersRepository(db)
     user = userrepo.getByEmail(dataIn.email)
-    sleep(1)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
 
@@ -63,4 +62,5 @@ def post_login(
     if not userreal:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
 
+    sleep(1)
     create_cookie_access_token(db, response, user)

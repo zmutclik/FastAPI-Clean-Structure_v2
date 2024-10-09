@@ -112,7 +112,7 @@
 <!-- ------------------- -->
 <script>
     const api = axios.create({
-        baseURL: '/auth/users{% if user %}/{{user.id}}{% endif %}',
+        baseURL: '/page/users/{{clientId}}/{{sessionId}}{% if user %}/{{user.id}}{% endif %}',
         timeout: 2000,
         headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
     });
