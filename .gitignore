@@ -163,10 +163,9 @@ cython_debug/
 
 #######################################################################################################################
 .vscode
-
-files/database/mysqldata/*
-files/database/db/log/*
+files/database/db/sys/*
+files/database/db/*
 files/temp/*
 
-!files/database/log/.gitkeep
-!files/temp/.gitkeep
+# !files/database/log/.gitkeep
+# !files/temp/.gitkeep
