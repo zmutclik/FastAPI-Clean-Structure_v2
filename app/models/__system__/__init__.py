@@ -1,11 +1,20 @@
 from .logs import TableLogs
-from .auth.scope import ScopeTable
-from .auth.users import UsersTable
-from .auth.userscope import UserScopeTable
+from .scope import ScopeTable
+from .users import UsersTable
+from .userscope import UserScopeTable
+
+from .system import SystemTable
+from .changelog import ChangeLogTable
+from .repository import RepositoryTable
 
 __all__ = [
     "TableLogs",
+    #############################################
     "ScopeTable",
     "UsersTable",
     "UserScopeTable",
+    #############################################
+    "SystemTable",
+    "ChangeLogTable",
+    "RepositoryTable",
 ]

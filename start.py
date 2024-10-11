@@ -1,10 +1,19 @@
 import os
+import sys
 import uvicorn
 from dotenv import load_dotenv
 import argparse
 from subprocess import Popen
+
 #######################################################################################################################
-parser = argparse.ArgumentParser(description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan.")
+if not os.access("files/database/db/.gitkeep", os.W_OK):
+    print("===ERROR===")
+    print("===ERROR===")
+    sys.exit('Tolong Buat Folder "Files/database/db" menjadi Writable.')
+#######################################################################################################################
+parser = argparse.ArgumentParser(
+    description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan."
+)
 parser.add_argument("module", help="Pilih salah satu = ws, celery atau fower")
 args = parser.parse_args()
 
@@ -43,7 +52,6 @@ if __name__ == "__main__":
                 reload=True,
                 reload_dirs=["app"],
             )
-    
-    
+
     # if args.module == "celery":
-        # exec( "python -m celery -A worker.celery.celery_app worker --loglevel=info"  )
+    # exec( "python -m celery -A worker.celery.celery_app worker --loglevel=info"  )

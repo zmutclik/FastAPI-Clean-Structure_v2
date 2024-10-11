@@ -72,8 +72,8 @@ def page_system_users_form(
     )
 
 
-@router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
-def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
+@router.get("/{cId}/{sId}/{app_v}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
+def page_js(cId: str, sId: str,app_v:str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
     return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)

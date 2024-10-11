@@ -1,61 +1,65 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 from pydantic import Field
+from sqlalchemy.orm import Session
 
-
-class DBConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env", env_file_encoding="utf-8", extra="ignore")
-    IPADDRESS: str = "127.0.0.1"
-    PORT: str = "3307"
-    USER: str = "root"
-    PASSWORD: str = "blackant"
-    NAME: str = "db"
-
-    @property
-    def DB_ENGINE(self) -> str:
-        return "mysql+pymysql://{user}:{password}@{hostname}:{port}/{database}".format(
-            user=self.USER,
-            port=self.PORT,
-            password=self.PASSWORD,
-            hostname=self.IPADDRESS,
-            database=self.NAME,
-        )
-
-
-class RABBITMQConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="RABBITMQ_", env_file=".env", env_file_encoding="utf-8", extra="ignore")
-    IPADDRESS: str = "192.168.40.5"
-    PORT: str = "5672"
-    USER: str = "semut"
-    PASSWORD: str = "blackant"
-    VHOST: str = "semut-dev"
-
-    @property
-    def CELERY_ENGINE(self) -> str:
-        return "amqp://{user}:{password}@{hostname}:{ports}//{vhost}".format(
-            user=self.USER,
-            password=self.PASSWORD,
-            hostname=self.IPADDRESS,
-            ports=self.PORT,
-            vhost=self.VHOST,
-        )
+from .db.system import engine_db
+from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable
 
 
 class Config(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
-    APP_NAME: str = Field("FastAPI-Clean-Structure")
-    APP_DESCRIPTION: str = Field("This is a very fancy project, with auto docs for the API and everything.")
-    APP_VERSION: str = "0.001"
+    APP_NAME: str
+    APP_DESCRIPTION: str
 
-    CLIENTID_KEY: str = Field("fastapi-clean-structure_id")
-    SESSION_KEY: str = Field("fastapi-clean-structure_sesi")
-    TOKEN_KEY: str = Field("fastapi-clean-structure_token")
+    APP_VERSION: str
 
-    SECRET_TEXT: str = "HxekWSNWYKyOsezYRQxFEJNgbUroNzDT"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    ALGORITHM: str = "HS256"
+    CLIENTID_KEY: str
+    SESSION_KEY: str
+    TOKEN_KEY: str
 
-    DATABASE: DBConfig = DBConfig()
-    RABBITMQ: RABBITMQConfig = RABBITMQConfig()
+    SECRET_TEXT: str
+    TOKEN_EXPIRED: int
+    ALGORITHM: str
+
+    DATABASE: str
+    RABBITMQ: str
 
 
-config: Config = Config()
+def repository(db, type):
+    d = (
+        db.query(RepositoryTable.value)
+        .filter(
+            RepositoryTable.deleted_at == None,
+            RepositoryTable.type == type,
+            RepositoryTable.active == True,
+        )
+        .first()
+    )
+    return d[0]
+
+
+def changelogs(db):
+    d = (
+        db.query(ChangeLogTable.version_name)
+        .filter(ChangeLogTable.deleted_at == None)
+        .order_by(ChangeLogTable.id.desc())
+        .first()
+    )
+    return d[0]
+
+
+with engine_db.begin() as connection:
+    with Session(bind=connection) as db:
+        sys = db.query(SystemTable).first()
+        config: Config = Config(
+            APP_NAME=sys.APP_NAME,
+            APP_DESCRIPTION=sys.APP_DESCRIPTION,
+            APP_VERSION=changelogs(db),
+            CLIENTID_KEY=sys.CLIENTID_KEY,
+            SESSION_KEY=sys.SESSION_KEY,
+            TOKEN_KEY=sys.TOKEN_KEY,
+            SECRET_TEXT=sys.SECRET_TEXT,
+            TOKEN_EXPIRED=sys.TOKEN_EXPIRED,
+            ALGORITHM=sys.ALGORITHM,
+            DATABASE=repository(db, "MariaDB"),
+            RABBITMQ=repository(db, "RabbitMQ"),
+        )

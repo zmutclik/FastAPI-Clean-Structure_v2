@@ -109,5 +109,5 @@ def create_cookie_access_token(db: Session, response: Response, userModel):
     userScope = []
     for item in ScopesRepository(db).getScopesUser(userModel.id):
         userScope.append(item.scope)
-    access_token = create_user_access_token(db, userModel, userScope, config.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_user_access_token(db, userModel, userScope, config.TOKEN_EXPIRED)
     response.set_cookie(key=config.TOKEN_KEY, value=access_token)
