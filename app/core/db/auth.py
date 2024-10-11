@@ -48,7 +48,7 @@ if os.path.exists(fileDB_ENGINE):
                         "full_name": "Admin SeMuT",
                         "hashed_password": "$2b$12$ofIPPqnjPf54SzEvctr3DOzNqyjZQqDaA3GraVDvBobo/UfjtGqQm",
                         "limit_expires": "525960",
-                        "created_user": "admin",
+                        "created_user": "sys",
                     }
                 )
                 db.add(data)
