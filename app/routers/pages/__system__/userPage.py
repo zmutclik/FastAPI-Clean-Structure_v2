@@ -26,9 +26,16 @@ class PathJS(str, Enum):
 
 ###PAGES###############################################################################################################
 from fastapi.responses import HTMLResponse
-from app.repositories.__system__.auth import UsersRepository
+from app.repositories.__system__.auth import (
+    UsersRepository,
+    UserScopesRepository,
+    ScopesRepository,
+)
 from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
+from app.services.__system__.auth import (
+    page_get_current_active_user as get_user_active,
+    get_current_active_user,
+)
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -45,13 +52,23 @@ def page_system_users_form(
     sId: str,
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
+    db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + "form", req, cId, sId)
+    return TemplateResponseSet(
+        templates,
+        path_template + "form",
+        req,
+        cId,
+        sId,
+        data={"userscopes": ScopesRepository(db).all()},
+    )
 
 
-@router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
+@router.get(
+    "/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False
+)
 def page_system_users_form(
     cId: str,
     sId: str,
@@ -68,12 +85,19 @@ def page_system_users_form(
         req,
         cId,
         sId,
-        data={"user": UsersRepository(db).getById(id)},
+        data={
+            "user": UsersRepository(db).getById(id),
+            "userscopes": UserScopesRepository(db).getAllByUser(id),
+        },
     )
 
 
-@router.get("/{cId}/{sId}/{app_v}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
-def page_js(cId: str, sId: str,app_v:str, req: Request, pathFile: PathJS):
+@router.get(
+    "/{cId}/{sId}/{app_v}/{pathFile}",
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
+def page_js(cId: str, sId: str, app_v: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
     return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
@@ -95,7 +119,9 @@ def get_datatable_result(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    query = select(UsersTable, UsersTable.id.label("DT_RowId")).where(UsersTable.deleted_at == None)
+    query = select(UsersTable, UsersTable.id.label("DT_RowId")).where(
+        UsersTable.deleted_at == None
+    )
 
     datatable: DataTable = DataTable(
         request_params=params,
@@ -111,13 +137,20 @@ def get_datatable_result(
 from app.schemas.__system__.auth import UserResponse, UserSave, UserEdit, UserDataIn
 
 
-@router.post("/{cId}/{sId}", response_model=UserResponse, status_code=201, include_in_schema=False)
+@router.post(
+    "/{cId}/{sId}",
+    response_model=UserResponse,
+    status_code=201,
+    include_in_schema=False,
+)
 async def create_user(
     dataIn: UserDataIn,
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -125,23 +158,36 @@ async def create_user(
 
     userrepo = UsersRepository(db)
     if userrepo.get(dataIn.username):
-        raise HTTPException(status_code=400, detail="USERNAME sudah ada yang menggunakan.")
+        raise HTTPException(
+            status_code=400, detail="USERNAME sudah ada yang menggunakan."
+        )
     if userrepo.getByEmail(dataIn.email):
         raise HTTPException(status_code=400, detail="EMAIL sudah ada yang menggunakan.")
 
     data = UserSave.model_validate(dataIn.model_dump())
     data.created_user = current_user.username
-    return userrepo.create(data.model_dump())
+    cdata = userrepo.create(data.model_dump())
+    usrepo = UserScopesRepository(db)
+    for i in dataIn.userScopes:
+        usrepo.create({"id_user": cdata.id, "id_scope": i})
+    return userrepo.get(cdata.username)
 
 
-@router.post("/{cId}/{sId}/{idUser}", response_model=UserResponse, status_code=202, include_in_schema=False)
+@router.post(
+    "/{cId}/{sId}/{idUser}",
+    response_model=UserResponse,
+    status_code=202,
+    include_in_schema=False,
+)
 async def update_user(
     dataIn: UserDataIn,
     idUser: int,
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -154,16 +200,30 @@ async def update_user(
 
     data = UserEdit.model_validate(dataIn.model_dump())
     data.updated_at = datetime.datetime.now()
-    return userrepo.update(idUser, data.model_dump())
+    userrepo.update(idUser, data.model_dump())
+
+    usrepo = UserScopesRepository(db)
+    usrepo.deleteByUser(dataUser.id)
+    for i in dataIn.userScopes:
+        usrepo.create({"id_user": dataUser.id, "id_scope": i})
+
+    return userrepo.get(dataUser.username)
 
 
-@router.delete("/{cId}/{sId}/{idUser}", response_model=UserResponse, status_code=202, include_in_schema=False)
+@router.delete(
+    "/{cId}/{sId}/{idUser}",
+    response_model=UserResponse,
+    status_code=202,
+    include_in_schema=False,
+)
 async def delete_user(
     idUser: int,
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -174,4 +234,7 @@ async def delete_user(
     if dataUser is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
-    return userrepo.update(idUser, {"deleted_at": datetime.datetime.now(), "deleted_user": current_user.username})
+    return userrepo.update(
+        idUser,
+        {"deleted_at": datetime.datetime.now(), "deleted_user": current_user.username},
+    )

@@ -37,9 +37,14 @@ $(document).ready(function () {
                 "username": $("#form_ input[name='username']").val(),
                 "email": $("#form_ input[name='email']").val(),
                 "limit_expires": $("#form_ input[name='limit_expires']").val(),
+                "userScopes": $('input[name="userScopes"]:checked').map(function () {
+                    return $(this).val();
+                }).get(),
             })
                 .then(function (response) {
                     idU = response.data.id;
+                    console.log(response);
+                    
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
                             window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + idU;
