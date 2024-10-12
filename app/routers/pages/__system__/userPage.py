@@ -80,7 +80,7 @@ def page_js(cId: str, sId: str,app_v:str, req: Request, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models.__system__ import auth
+from app.models.__system__ import UsersTable
 from sqlalchemy import select
 from datatables import DataTable
 
@@ -95,7 +95,7 @@ def get_datatable_result(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    query = select(auth.UsersTable, auth.UsersTable.id.label("DT_RowId")).where(auth.UsersTable.deleted_at == None)
+    query = select(UsersTable, UsersTable.id.label("DT_RowId")).where(UsersTable.deleted_at == None)
 
     datatable: DataTable = DataTable(
         request_params=params,

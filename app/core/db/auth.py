@@ -6,9 +6,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from . import BaseAuth as Base
-from app.models.__system__.auth import UsersTable
-from app.models.__system__.auth import ScopeTable
-from app.models.__system__.auth import UserScopeTable
+from app.models.__system__ import UsersTable
+from app.models.__system__ import ScopeTable
+from app.models.__system__ import UserScopeTable
 
 
 now = datetime.now()

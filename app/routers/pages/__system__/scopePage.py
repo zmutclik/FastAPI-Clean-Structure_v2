@@ -81,7 +81,7 @@ def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models.__system__ import auth
+from app.models.__system__ import ScopeTable
 from sqlalchemy import select
 from datatables import DataTable
 
@@ -96,7 +96,7 @@ def get_datatables(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    query = select(auth.ScopeTable, auth.ScopeTable.id.label("DT_RowId"))
+    query = select(ScopeTable, ScopeTable.id.label("DT_RowId"))
 
     datatable: DataTable = DataTable(
         request_params=params,
