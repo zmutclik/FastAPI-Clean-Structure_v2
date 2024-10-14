@@ -1,0 +1,161 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} System Setting {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- DataTables -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.css" rel="stylesheet">
+<link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+
+
+<!-- Theme style -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">SISTEM SETTING</h1>
+                    <h3 class="card-title mt-2">Manajemen</h3>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs text-center">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-setting" type="button" role="tab" aria-controls="nav-setting" aria-selected="true">System Setting</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-changelog" type="button" role="tab" aria-controls="nav-changelog" aria-selected="false">ChangLog</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab" tabindex="0">
+                            <form id="form_setting">
+                                <div class="mb-3">
+                                    <label for="APP_NAME" class="form-label">Nama Applikasi</label>
+                                    <input type="text" class="form-control" name="APP_NAME" value="{{app.APP_NAME}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="APP_DESCRIPTION" class="form-label">Deskripsi</label>
+                                    <input type="text" class="form-control" name="APP_DESCRIPTION" value="{{app.APP_DESCRIPTION}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="CLIENTID_KEY" class="form-label">KEY_CLIENT Cookies</label>
+                                    <input type="text" class="form-control" name="CLIENTID_KEY" value="{{app.CLIENTID_KEY}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="SESSION_KEY" class="form-label">KEY_SESSION Cookies</label>
+                                    <input type="text" class="form-control" name="SESSION_KEY" value="{{app.SESSION_KEY}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="TOKEN_KEY" class="form-label">KEY_TOKEN Cookies</label>
+                                    <input type="text" class="form-control" name="TOKEN_KEY" value="{{app.TOKEN_KEY}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="TOKEN_EXPIRED" class="form-label">TOKEN_EXPIRED</label>
+                                    <input type="number" class="form-control" name="TOKEN_EXPIRED" value="{{app.TOKEN_EXPIRED}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ALGORITHM" class="form-label">Algorithm JWT</label>
+                                    <input type="text" class="form-control" name="ALGORITHM" value="{{app.ALGORITHM}}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="SECRET_TEXT" class="form-label">Secret Text</label>
+                                    <input type="text" class="form-control" name="SECRET_TEXT" value="{{app.SECRET_TEXT}}">
+                                </div>
+                                <div class="mb-3 mt-5 float-end">
+                                    <button type="button" class="submit btn btn-primary">SIMPAN</button>
+                                </div>
+                            </form>
+                            <!-- /#nav-setting -->
+                        </div>
+                        <div class="tab-pane fade" id="nav-changelog" role="tabpanel" aria-labelledby="nav-changelog-tab" tabindex="0">
+                            <div class="row">
+                                <form id="form_changelog">
+                                    <div class="mb-3">
+                                        <label for="version" class="form-label">Versi Applikasi</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control col-2" name="version" value="{{app.version}}" placeholder="Versi">
+                                            <input type="text" class="form-control col-2" name="version_name" value="{{app.version_name}}" placeholder="Nama">
+                                            <input type="text" class="form-control" name="description" value="{{app.description}}" placeholder="Deskripsi">
+
+                                            <button type="button" class="submit btn btn-primary">TAMBAHKAN</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <table id="table_" class="table table-bordered table-striped">
+                            </table>
+
+                            <!-- /#nav-changeLog -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- DataTables -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_id.min.js" integrity="sha512-Orvt00GKq6XzBWqbltE094YknH2BN78wpQqLT/P3Jx3nhaBmEbd7JzVDJ2qLTu8J8SuMoACKoIxk851FS5ZIUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<!-- ------------------- -->
+<script>
+    const api = axios.create({
+        baseURL: '/page/systemsettings/{{clientId}}/{{sessionId}}',
+        timeout: 2000,
+        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
+    });
+</script>
+<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form_changelog.js"></script>
+
+{% endblock javascripts %}

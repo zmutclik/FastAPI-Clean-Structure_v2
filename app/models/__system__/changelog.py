@@ -25,12 +25,12 @@ from app.core.db import BaseSysT as Base
 class ChangeLogTable(Base):
     __tablename__ = "changelog"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     datetime = Column(TIMESTAMP, nullable=False, server_default=func.now())
     version = Column(String(32), unique=True, index=True)
     version_name = Column(String(50), unique=True, index=True)
     description = Column(String(256))
-    
+
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)

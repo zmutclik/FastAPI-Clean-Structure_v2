@@ -1,5 +1,5 @@
-from .changelog import changeLogs
+from .changelog import changeLogsSchemas
 
 __all__ = [
-    "changeLogs",
+    "changeLogsSchemas",
 ]
