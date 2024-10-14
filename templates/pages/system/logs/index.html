@@ -1,0 +1,164 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Logs {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- DataTables -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.css" rel="stylesheet">
+<link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- Theme style -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">LOGS</h1>
+                    <h3 class="card-title mt-2"></h3>
+                </div>
+                <div class="col-sm-6">
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Filter
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3 row">
+                                        <label for="tanggal_start" class="col-sm-2 col-form-label">Date Time</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="time_start">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" id="time_end">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <div class="float-end"><button type="button" class="btn btn-link btntimenow"><i class="fa-solid fa-clock"></i></button></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="ipaddress" class="col-sm-2 col-form-label">IP Address</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="ipaddress">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="method" class="col-sm-2 col-form-label">Method</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-select" id="method">
+                                                <option selected></option>
+                                                <option value="GET">GET</option>
+                                                <option value="POST">POST</option>
+                                                <option value="PUT">PUT</option>
+                                                <option value="DELETE">DELETE</option>
+                                                <option value="OPTIONS">OPTIONS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col">
+                                    <div class="mb-3 row">
+                                        <label for="status" class="col-sm-2 col-form-label">Status</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-select" id="status">
+                                                <option selected></option>
+                                                <option value="2">200 an</option>
+                                                <option value="3">300 an</option>
+                                                <option value="4">400 an</option>
+                                                <option value="5">500 an</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="ipaddress" class="col-sm-2 col-form-label">Path</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="querypath">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="ipaddress" class="col-sm-2 col-form-label">Params</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="queryparams">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table id="table_" class="table table-bordered table-striped">
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- DataTables -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<!-- ------------------- -->
+<script>
+    const api = axios.create({
+        baseURL: '/page/logs/{{clientId}}/{{sessionId}}',
+        timeout: 2000,
+        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
+    });
+</script>
+<script src="/page/logs/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+
+{% endblock javascripts %}
