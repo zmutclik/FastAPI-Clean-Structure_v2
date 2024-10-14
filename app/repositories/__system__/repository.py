@@ -7,7 +7,6 @@ class Repository:
     def __init__(self, db_session: Session) -> None:
         self.session = db_session
 
-
     def value(self, type: str):
         d = (
             self.session.query(MainTable)
@@ -20,6 +19,13 @@ class Repository:
             .first()
         )
         return d.value
+
+    def get(self, id: int):
+        return (
+            self.session.query(MainTable)
+            .filter(MainTable.id == id, MainTable.deleted_at == None)
+            .first()
+        )
 
     # def all(self):
     #     return (
@@ -36,11 +42,12 @@ class Repository:
         self.session.refresh(data)
         return data
 
-    # def update(self, id: int, dataIn: dict):
-    #     dataIn_update = dataIn if type(dataIn) is dict else dataIn.__dict__
-    #     (self.session.query(MainTable).filter(MainTable.id == id).update(dataIn_update))
-    #     self.session.commit()
-    #     return self.getById(id)
+    def update(self, id: int, dataIn: dict):
+        dataIn_update = dataIn if type(dataIn) is dict else dataIn.__dict__
+        dataIn_update["updated_at"] = datetime.now()
+        (self.session.query(MainTable).filter(MainTable.id == id).update(dataIn_update))
+        self.session.commit()
+        return self.get(id)
 
-    # def delete(self, username: str, id_: int) -> None:
-    #     self.update(id_, {"deleted_at": datetime.now(), "deleted_user": username})
+    def delete(self, username: str, id_: int) -> None:
+        self.update(id_, {"deleted_at": datetime.now(), "deleted_user": username})
