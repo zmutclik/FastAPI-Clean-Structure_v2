@@ -4,6 +4,7 @@ from .__system__.scopePage import router as scopePage
 from .__system__.repositoryPage import router as repositoryPage
 from .__system__.settingsPage import router as settingsPage
 from .__system__.logsPage import router as logsPage
+from .__system__.documentationPage import router as documentationPage
 from .dashboardPage import router as dashboardPage
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "repositoryPage",
     "settingsPage",
     "logsPage",
+    "documentationPage",
     #######################################################################################################################
     "dashboardPage",
 ]

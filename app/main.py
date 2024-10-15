@@ -19,7 +19,7 @@ def create_app() -> FastAPI:
         version="1.0.0",
         swagger_ui_parameters={"defaultModelsExpandDepth": -1},
         redoc_url=None,
-        # docs_url=None,
+        docs_url=None,
     )
 
     return current_app
@@ -53,6 +53,7 @@ app.include_router(pages.scopePage)
 app.include_router(pages.repositoryPage)
 app.include_router(pages.settingsPage)
 app.include_router(pages.logsPage)
+app.include_router(pages.documentationPage)
 app.include_router(pages.dashboardPage)
 
 
