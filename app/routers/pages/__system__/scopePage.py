@@ -11,7 +11,10 @@ from app.core.db.auth import engine_db, get_db
 from app.schemas import TemplateResponseSet
 
 from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
+from app.services.__system__.auth import (
+    page_get_current_active_user as get_user_active,
+    get_current_active_user,
+)
 
 
 router = APIRouter(
@@ -37,7 +40,9 @@ def page_system_scopes(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(templates, path_template + "index", req)
+    return TemplateResponseSet(
+        templates, path_template + "index", req, data={"user": c_user}
+    )
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
@@ -49,10 +54,12 @@ def page_system_scopes_add(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + "form", req, cId, sId)
+    return TemplateResponseSet(templates, path_template + "form", req, cId, sId, data={"user": c_user})
 
 
-@router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
+@router.get(
+    "/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False
+)
 def page_system_scopes_form(
     cId: str,
     sId: str,
@@ -69,11 +76,15 @@ def page_system_scopes_form(
         req,
         cId,
         sId,
-        data={"scope": ScopesRepository(db).getById(id)},
+        data={"scope": ScopesRepository(db).getById(id),"user": c_user},
     )
 
 
-@router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
+@router.get(
+    "/{cId}/{sId}/{app_version}/{pathFile}",
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
 def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
@@ -112,13 +123,17 @@ def get_datatables(
 from app.schemas.__system__.auth import Scopes, ScopesSave
 
 
-@router.post("/{cId}/{sId}", response_model=Scopes, status_code=201, include_in_schema=False)
+@router.post(
+    "/{cId}/{sId}", response_model=Scopes, status_code=201, include_in_schema=False
+)
 async def create(
     dataIn: ScopesSave,
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -131,14 +146,21 @@ async def create(
     return repo.create(dataIn.model_dump())
 
 
-@router.post("/{cId}/{sId}/{idS}", response_model=Scopes, status_code=202, include_in_schema=False)
+@router.post(
+    "/{cId}/{sId}/{idS}",
+    response_model=Scopes,
+    status_code=202,
+    include_in_schema=False,
+)
 async def update(
     dataIn: ScopesSave,
     idS: int,
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -158,7 +180,9 @@ async def delete(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[
+        UserSchemas, Security(get_current_active_user, scopes=["admin"])
+    ],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:

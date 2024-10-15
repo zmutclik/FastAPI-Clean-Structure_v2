@@ -40,7 +40,12 @@ def page_system_repository(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(templates, path_template + "index", req)
+    return TemplateResponseSet(
+        templates,
+        path_template + "index",
+        req,
+        data={"user": c_user},
+    )
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
@@ -52,7 +57,14 @@ def page_system_repository_add(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + "form", req, cId, sId)
+    return TemplateResponseSet(
+        templates,
+        path_template + "form",
+        req,
+        cId,
+        sId,
+        data={"user": c_user},
+    )
 
 
 @router.get(
@@ -74,7 +86,7 @@ def page_system_repository_form(
         req,
         cId,
         sId,
-        data={"repository": Repository(db).get(id)},
+        data={"repository": Repository(db).get(id), "user": c_user},
     )
 
 

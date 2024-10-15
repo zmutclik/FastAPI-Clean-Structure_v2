@@ -32,5 +32,6 @@ def documentation_page(
             "clientId": request.state.clientId,
             "sessionId": request.state.sessionId,
             "segment": request.scope["route"].name,
+            "user": current_user,
         },
     )

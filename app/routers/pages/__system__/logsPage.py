@@ -41,7 +41,7 @@ def page_system_logs(
         templates,
         path_template + "index",
         req,
-        data={"ip": repo.getIPs()},
+        data={"ip": repo.getIPs(),"user": c_user},
     )
 
 

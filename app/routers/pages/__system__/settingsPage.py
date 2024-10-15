@@ -39,7 +39,7 @@ def page_system_settings(
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
     db: Session = Depends(get_db),
 ):
-    return TemplateResponseSet(templates, path_template + "index", req, data={"app": SystemRepository(db).get()})
+    return TemplateResponseSet(templates, path_template + "index", req, data={"app": SystemRepository(db).get(),"user": c_user})
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)

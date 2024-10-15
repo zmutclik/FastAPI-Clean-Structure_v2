@@ -43,7 +43,12 @@ def page_system_users(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(templates, path_template + "index", req)
+    return TemplateResponseSet(
+        templates,
+        path_template + "index",
+        req,
+        data={"user": c_user},
+    )
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
@@ -62,7 +67,7 @@ def page_system_users_form(
         req,
         cId,
         sId,
-        data={"userscopes": ScopesRepository(db).all()},
+        data={"userscopes": ScopesRepository(db).all(),"user": c_user},
     )
 
 
