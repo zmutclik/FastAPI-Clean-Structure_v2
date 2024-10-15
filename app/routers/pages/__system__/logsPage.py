@@ -28,7 +28,7 @@ class PathJS(str, Enum):
 
 
 ###PAGES###############################################################################################################
-from app.repositories.__system__.auth import ScopesRepository
+from app.repositories.__system__ import LogsRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -36,7 +36,13 @@ def page_system_logs(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(templates, path_template + "index", req)
+    repo = LogsRepository(datetime.datetime.now())
+    return TemplateResponseSet(
+        templates,
+        path_template + "index",
+        req,
+        data={"ip": repo.getIPs()},
+    )
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
@@ -63,9 +69,12 @@ def get_datatables(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    fileDB_ENGINE = "./files/database/db/logs_{}.db".format("2024-10")
+    print(params["search"]["time_start"])
+    tahunbulan = datetime.datetime.strptime(params["search"]["time_start"], "%Y-%m-%d %H:%M:%S")
+    fileDB_ENGINE = "./files/database/db/logs_{}.db".format(tahunbulan.strftime("%Y-%m"))
     DB_ENGINE = "sqlite:///" + fileDB_ENGINE
     engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})
+
 
     query = select(TableLogs, TableLogs.id.label("DT_RowId")).filter(
         TableLogs.startTime >= params["search"]["time_start"],

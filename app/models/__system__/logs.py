@@ -19,3 +19,9 @@ class TableLogs(Base):
     username = Column(String(50), index=True)
     status_code = Column(Integer, index=True)
     process_time = Column(Float, nullable=True)
+
+
+class TableIpAddress(Base):
+    __tablename__ = "ipaddress"
+    ipaddress = Column(String(50), primary_key=True, index=True)
+    count = Column(Integer)

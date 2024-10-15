@@ -72,3 +72,5 @@ class LogServices:
         response.set_cookie(key=self.session_key, value=self.data.session_id)
 
         self.repository.create(self.data.model_dump())
+        
+        
