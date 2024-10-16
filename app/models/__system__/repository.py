@@ -27,8 +27,10 @@ class RepositoryTable(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(32), index=True)
-    type = Column(String(32), index=True)
-    value = Column(String(256))
+    allocation = Column(String(32), index=True)
+    datalink = Column(String(256))
+    user = Column(String(50))
+    password = Column(String(50))
     active = Column(Boolean, default=False)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())

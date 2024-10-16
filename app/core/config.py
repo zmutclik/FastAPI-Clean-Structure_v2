@@ -24,26 +24,21 @@ class Config(BaseSettings):
     RABBITMQ: str
 
 
-def repository(db, type):
+def repository(db, alokasi):
     d = (
-        db.query(RepositoryTable.value)
+        db.query(RepositoryTable.datalink, RepositoryTable.user, RepositoryTable.password)
         .filter(
             RepositoryTable.deleted_at == None,
-            RepositoryTable.type == type,
+            RepositoryTable.allocation == alokasi,
             RepositoryTable.active == True,
         )
         .first()
     )
-    return d[0]
+    return d[0].format(user=d[1], password=d[2])
 
 
 def changelogs(db):
-    d = (
-        db.query(ChangeLogTable.version_name)
-        .filter(ChangeLogTable.deleted_at == None)
-        .order_by(ChangeLogTable.id.desc())
-        .first()
-    )
+    d = db.query(ChangeLogTable.version_name).filter(ChangeLogTable.deleted_at == None).order_by(ChangeLogTable.id.desc()).first()
     return d[0]
 
 

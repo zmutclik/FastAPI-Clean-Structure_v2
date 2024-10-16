@@ -41,12 +41,7 @@ if os.path.exists(DB_FILE):
                 import random
                 import string
 
-                letters = (
-                    string.ascii_uppercase
-                    + string.ascii_letters
-                    + string.digits
-                    + string.ascii_lowercase
-                )
+                letters = string.ascii_uppercase + string.ascii_letters + string.digits + string.ascii_lowercase
                 SECRET_TEXT = "".join(random.choice(letters) for i in range(32))
                 db.add(
                     SystemTable(
@@ -78,8 +73,10 @@ if os.path.exists(DB_FILE):
                     RepositoryTable(
                         **{
                             "name": "MariaDB",
-                            "type": "MariaDB",
-                            "value": "mysql+pymysql://root:password@127.0.0.1:3307/db",
+                            "allocation": "MariaDB",
+                            "datalink": "mysql+pymysql://{user}:{password}@127.0.0.1:3307/db",
+                            "user": "root",
+                            "password": "password",
                             "active": True,
                             "created_user": "SeMuT CiLiK",
                         }
@@ -89,8 +86,10 @@ if os.path.exists(DB_FILE):
                     RepositoryTable(
                         **{
                             "name": "RabbitMQ",
-                            "type": "RabbitMQ",
-                            "value": "amqp://guest:guest@192.168.40.5:5672//semut-dev",
+                            "allocation": "RabbitMQ",
+                            "datalink": "amqp://{user}:{password}@192.168.40.5:5672//semut-dev",
+                            "user": "guest",
+                            "password": "guest",
                             "active": True,
                             "created_user": "SeMuT CiLiK",
                         }

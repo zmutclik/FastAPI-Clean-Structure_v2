@@ -5,8 +5,10 @@ from datetime import datetime
 
 class RepositoryData(BaseModel):
     name: str
-    type: str
-    value: str
+    allocation: str
+    datalink: str
+    user: str
+    password: str
     active: bool
 
 

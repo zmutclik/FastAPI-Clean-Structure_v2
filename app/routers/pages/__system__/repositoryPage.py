@@ -67,9 +67,7 @@ def page_system_repository_add(
     )
 
 
-@router.get(
-    "/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False
-)
+@router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
 def page_system_repository_form(
     cId: str,
     sId: str,
@@ -128,8 +126,9 @@ def get_datatables(
             "DT_RowId",
             "id",
             "name",
-            "type",
-            "value",
+            "allocation",
+            "datalink",
+            "user",
             "active",
         ],
         engine=engine_db,
@@ -157,9 +156,7 @@ async def create(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -174,7 +171,7 @@ async def create(
 
 
 @router.post(
-    "/{cId}/{sId}/{idS}",
+    "/{cId}/{sId}/{idR}",
     response_model=RepositorysSchemas,
     status_code=202,
     include_in_schema=False,
@@ -185,9 +182,7 @@ async def update(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -207,9 +202,7 @@ async def delete(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:

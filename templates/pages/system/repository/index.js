@@ -18,8 +18,9 @@ $(document).ready(function () {
         "responsive": true,
         columns: [
             { "data": "name", "title": "NAMA", },
-            { "data": "type", "title": "TIPE", },
-            { "data": "value", "title": "ISI", },
+            { "data": "allocation", "title": "PERUNTUKAN", },
+            { "data": "datalink", "title": "DATALINK", },
+            { "data": "user", "title": "USER", },
             { "data": "active", "title": "AKTIF", },
             { "data": "id", "title": "" },
         ],

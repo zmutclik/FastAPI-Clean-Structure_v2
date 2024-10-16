@@ -54,19 +54,30 @@
                                 <input type="hidden" id="id" {% if repository %} value="{{repository.id}}" {% endif %}>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="name" placeholder="Nama Link" {% if repository %} value="{{repository.name}}" readonly {% endif %} required>
+                                    <input type="text" class="form-control" name="name" placeholder="Nama" {% if repository %} value="{{repository.name}}" readonly {% endif %} required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="type" class="form-label">Tipe</label>
-                                    <input type="text" class="form-control" name="type" placeholder="Deskripsi Skope" {% if repository %} value="{{repository.type}}" {% endif %} required>
+                                    <label for="allocation" class="form-label">Peruntukan</label>
+                                    <input type="text" class="form-control" name="allocation" placeholder="Peruntukan Link" {% if repository %} value="{{repository.allocation}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="value" class="form-label">Isi Link</label>
-                                    <input type="text" class="form-control" name="value" placeholder="Deskripsi Skope" {% if repository %} value="{{repository.value}}" {% endif %} required>
+                                    <label for="datalink" class="form-label">Isi Data</label>
+                                    <input type="text" class="form-control" name="datalink" placeholder="Data Link" {% if repository %} value="{{repository.datalink}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="user" class="form-label">User</label>
+                                    <input type="text" class="form-control" name="user" placeholder="User" {% if repository %} value="{{repository.user}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="text" class="form-control" name="password" placeholder="P45w012d" {% if repository %} value="{{repository.password}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="active" class="form-label">Aktif</label>
-                                    <input type="text" class="form-control" name="active" placeholder="Deskripsi Skope" {% if repository %} value="{{repository.active}}" {% endif %} required>
+                                    <select class="form-select" aria-label="Default select" name="active">
+                                        <option value="true" {% if repository %}{% if repository.active %} selected {% endif %}{% endif %}>Aktif</option>
+                                        <option value="false"{% if repository %}{% if not repository.active %} selected {% endif %}{% endif %}>Tidak Aktif</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
                                     <button type="submit" class="btn btn-primary">SIMPAN</button>
@@ -112,7 +123,7 @@
 <!-- ------------------- -->
 <script>
     const api = axios.create({
-        baseURL: '/page/repository/{{clientId}}/{{sessionId}}{% if scope %}/{{scope.id}}{% endif %}',
+        baseURL: '/page/repository/{{clientId}}/{{sessionId}}{% if repository %}/{{repository.id}}{% endif %}',
         timeout: 2000,
         headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
     });

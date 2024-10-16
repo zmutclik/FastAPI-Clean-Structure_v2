@@ -31,9 +31,11 @@ $(document).ready(function () {
 
             api.post('', {
                 "name": $("#form_ input[name='name']").val(),
-                "type": $("#form_ input[name='type']").val(),
-                "value": $("#form_ input[name='value']").val(),
-                "active": $("#form_ input[name='active']").val(),
+                "allocation": $("#form_ input[name='allocation']").val(),
+                "datalink": $("#form_ input[name='datalink']").val(),
+                "user": $("#form_ input[name='user']").val(),
+                "password": $("#form_ input[name='password']").val(),
+                "active": $("#form_ select[name='active']").val(),
             })
                 .then(function (response) {
                     idU = response.data.id;

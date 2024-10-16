@@ -7,12 +7,12 @@ class Repository:
     def __init__(self, db_session: Session) -> None:
         self.session = db_session
 
-    def value(self, type: str):
+    def value(self, allocation: str):
         d = (
             self.session.query(MainTable)
             .filter(
                 MainTable.deleted_at == None,
-                MainTable.type == type,
+                MainTable.allocation == allocation,
                 MainTable.active == True,
             )
             .order_by(MainTable.id.desc())
@@ -21,19 +21,7 @@ class Repository:
         return d.value
 
     def get(self, id: int):
-        return (
-            self.session.query(MainTable)
-            .filter(MainTable.id == id, MainTable.deleted_at == None)
-            .first()
-        )
-
-    # def all(self):
-    #     return (
-    #         self.session.query(MainTable)
-    #         .filter(MainTable.deleted_at == None)
-    #         .order_by(MainTable.username)
-    #         .all()
-    #     )
+        return self.session.query(MainTable).filter(MainTable.id == id, MainTable.deleted_at == None).first()
 
     def create(self, dataIn):
         data = MainTable(**dataIn)
