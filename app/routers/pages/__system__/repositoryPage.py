@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.system import engine_db, get_db
-from app.schemas import TemplateResponseSet
+from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import (
@@ -22,8 +22,7 @@ router = APIRouter(
     tags=["FORM"],
 )
 
-templates = Jinja2Templates(directory="templates")
-path_template = "pages/system/repository/"
+pageResponse = PageResponseSchemas("templates", "pages/system/repository/")
 
 
 class PathJS(str, Enum):
@@ -40,12 +39,7 @@ def page_system_repository(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(
-        templates,
-        path_template + "index",
-        req,
-        data={"user": c_user},
-    )
+    return pageResponse.response("index.html", req)
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
@@ -57,14 +51,7 @@ def page_system_repository_add(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(
-        templates,
-        path_template + "form",
-        req,
-        cId,
-        sId,
-        data={"user": c_user},
-    )
+    return pageResponse.response("form.html", req)
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
@@ -78,14 +65,7 @@ def page_system_repository_form(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(
-        templates,
-        path_template + "form",
-        req,
-        cId,
-        sId,
-        data={"repository": Repository(db).get(id), "user": c_user},
-    )
+    return pageResponse.response("form.html", req, data={"repository": Repository(db).get(id)})
 
 
 @router.get(
@@ -96,7 +76,7 @@ def page_system_repository_form(
 def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
+    return pageResponse.response(pathFile, req)
 
 
 ###DATATABLES##########################################################################################################

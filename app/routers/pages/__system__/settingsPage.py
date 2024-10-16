@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.system import engine_db, get_db
-from app.schemas import TemplateResponseSet
+from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
@@ -19,8 +19,7 @@ router = APIRouter(
     tags=["FORM"],
 )
 
-templates = Jinja2Templates(directory="templates")
-path_template = "pages/system/settings/"
+pageResponse = PageResponseSchemas("templates", "pages/system/settings/")
 
 
 class PathJS(str, Enum):
@@ -39,14 +38,14 @@ def page_system_settings(
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
     db: Session = Depends(get_db),
 ):
-    return TemplateResponseSet(templates, path_template + "index", req, data={"app": SystemRepository(db).get(),"user": c_user})
+    return pageResponse.response("index.html", req, data={"app": SystemRepository(db).get()})
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
+    return pageResponse.response(pathFile, req)
 
 
 ###DATATABLES##########################################################################################################
@@ -70,7 +69,7 @@ def get_datatables(
     datatable: DataTable = DataTable(
         request_params=params,
         table=query,
-        column_names=["DT_RowId", "id", "datetime", "version", "version_name", "description","created_user"],
+        column_names=["DT_RowId", "id", "datetime", "version", "version_name", "description", "created_user"],
         engine=engine_db,
         # callbacks=callbacks,
     )

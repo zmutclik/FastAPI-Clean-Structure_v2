@@ -1,12 +1,13 @@
+from typing import Union
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from .db.system import engine_db
 from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable
 
 
-class Config(BaseSettings):
+class Config(BaseModel):
     APP_NAME: str
     APP_DESCRIPTION: str
 
@@ -20,8 +21,8 @@ class Config(BaseSettings):
     TOKEN_EXPIRED: int
     ALGORITHM: str
 
-    DATABASE: str
-    RABBITMQ: str
+    DATABASE: Union[str, None] = None
+    RABBITMQ: Union[str, None] = None
 
 
 def repository(db, alokasi):
@@ -34,7 +35,8 @@ def repository(db, alokasi):
         )
         .first()
     )
-    return d[0].format(user=d[1], password=d[2])
+    if d:
+        return d[0].format(user=d[1], password=d[2])
 
 
 def changelogs(db):

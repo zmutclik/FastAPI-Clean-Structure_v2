@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.auth import engine_db, get_db
-from app.schemas import TemplateResponseSet
+from app.schemas import PageResponseSchemas
 
 
 router = APIRouter(
@@ -15,8 +15,7 @@ router = APIRouter(
     tags=["FORM"],
 )
 
-templates = Jinja2Templates(directory="templates")
-path_template = "pages/system/users/"
+pageResponse = PageResponseSchemas("templates", "pages/system/users/")
 
 
 class PathJS(str, Enum):
@@ -43,12 +42,7 @@ def page_system_users(
     req: Request,
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(
-        templates,
-        path_template + "index",
-        req,
-        data={"user": c_user},
-    )
+    return pageResponse.response("index.html", req)
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
@@ -61,19 +55,10 @@ def page_system_users_form(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(
-        templates,
-        path_template + "form",
-        req,
-        cId,
-        sId,
-        data={"userscopes": ScopesRepository(db).all(),"user": c_user},
-    )
+    return pageResponse.response("form.html", req, data={"userscopes": ScopesRepository(db).all()})
 
 
-@router.get(
-    "/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False
-)
+@router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
 def page_system_users_form(
     cId: str,
     sId: str,
@@ -84,14 +69,10 @@ def page_system_users_form(
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(
-        templates,
-        path_template + "form",
+    pageResponse.response(
+        "form.html",
         req,
-        cId,
-        sId,
         data={
-            "user": UsersRepository(db).getById(id),
             "userscopes": UserScopesRepository(db).getAllByUser(id),
         },
     )
@@ -105,7 +86,7 @@ def page_system_users_form(
 def page_js(cId: str, sId: str, app_v: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
+    return pageResponse.response(pathFile, req)
 
 
 ###DATATABLES##########################################################################################################
@@ -124,9 +105,7 @@ def get_datatable_result(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    query = select(UsersTable, UsersTable.id.label("DT_RowId")).where(
-        UsersTable.deleted_at == None
-    )
+    query = select(UsersTable, UsersTable.id.label("DT_RowId")).where(UsersTable.deleted_at == None)
 
     datatable: DataTable = DataTable(
         request_params=params,
@@ -153,9 +132,7 @@ async def create_user(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -163,9 +140,7 @@ async def create_user(
 
     userrepo = UsersRepository(db)
     if userrepo.get(dataIn.username):
-        raise HTTPException(
-            status_code=400, detail="USERNAME sudah ada yang menggunakan."
-        )
+        raise HTTPException(status_code=400, detail="USERNAME sudah ada yang menggunakan.")
     if userrepo.getByEmail(dataIn.email):
         raise HTTPException(status_code=400, detail="EMAIL sudah ada yang menggunakan.")
 
@@ -190,9 +165,7 @@ async def update_user(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:
@@ -226,9 +199,7 @@ async def delete_user(
     cId: str,
     sId: str,
     req: Request,
-    current_user: Annotated[
-        UserSchemas, Security(get_current_active_user, scopes=["admin"])
-    ],
+    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     if req.state.clientId != cId or req.state.sessionId != sId:

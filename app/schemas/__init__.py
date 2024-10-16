@@ -1,5 +1,5 @@
-from .page import TemplateResponseSet
+from .page import PageResponseSchemas
 
 __all__ = [
-    "TemplateResponseSet",
+    "PageResponseSchemas",
 ]

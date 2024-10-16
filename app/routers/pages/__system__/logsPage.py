@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.logs import get_db
-from app.schemas import TemplateResponseSet
+from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
@@ -19,8 +19,7 @@ router = APIRouter(
     tags=["FORM"],
 )
 
-templates = Jinja2Templates(directory="templates")
-path_template = "pages/system/logs/"
+pageResponse = PageResponseSchemas("templates", "pages/system/logs/")
 
 
 class PathJS(str, Enum):
@@ -37,19 +36,14 @@ def page_system_logs(
     c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
     repo = LogsRepository(datetime.datetime.now())
-    return TemplateResponseSet(
-        templates,
-        path_template + "index",
-        req,
-        data={"ip": repo.getIPs(),"user": c_user},
-    )
+    return pageResponse.response("index.html", req, data={"ip": repo.getIPs()})
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
     if req.state.clientId != cId or req.state.sessionId != sId:
         raise HTTPException(status_code=404)
-    return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
+    return pageResponse.response(pathFile, req)
 
 
 ###DATATABLES##########################################################################################################
@@ -69,12 +63,10 @@ def get_datatables(
     if request.state.clientId != cId or request.state.sessionId != sId:
         raise HTTPException(status_code=404)
 
-    print(params["search"]["time_start"])
     tahunbulan = datetime.datetime.strptime(params["search"]["time_start"], "%Y-%m-%d %H:%M:%S")
     fileDB_ENGINE = "./files/database/db/logs_{}.db".format(tahunbulan.strftime("%Y-%m"))
     DB_ENGINE = "sqlite:///" + fileDB_ENGINE
     engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})
-
 
     query = select(TableLogs, TableLogs.id.label("DT_RowId")).filter(
         TableLogs.startTime >= params["search"]["time_start"],

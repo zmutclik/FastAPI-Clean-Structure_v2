@@ -1,6 +1,6 @@
 from .scope import ScopesSave, Scopes, UserScopesSave
 from .token import Token, TokenData
-from .users import UserSave, UserEdit, UserSchemas, UserResponse, UserDataIn
+from .users import UserSave, UserEdit, UserSchemas, UserResponse, UserDataIn,UserData,userloggedin
 from .login import loginSchemas
 
 __all__ = [
@@ -11,6 +11,8 @@ __all__ = [
     "TokenData",
     "UserSave",
     "UserEdit",
+    "UserData",
+    "userloggedin",
     "UserSchemas",
     "UserResponse",
     "UserDataIn",

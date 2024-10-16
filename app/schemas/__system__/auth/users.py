@@ -10,6 +10,9 @@ class UserData(BaseModel):
     email: EmailStr
     full_name: str
     limit_expires: Optional[int] = 30
+    
+class userloggedin(UserData):
+    created_at: Optional[datetime] = None
 
 
 class UserDataIn(UserData):
