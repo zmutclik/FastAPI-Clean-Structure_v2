@@ -1,17 +1,15 @@
-from typing import Annotated, Union, Any, Literal
+from typing import Annotated, Any
 from enum import Enum
-import datetime
 
 from fastapi import APIRouter, Request, Security, Depends, HTTPException
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.system import engine_db, get_db
 from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
+from app.services.__system__.auth import get_current_active_user
 
 
 router = APIRouter(
@@ -20,6 +18,11 @@ router = APIRouter(
 )
 
 pageResponse = PageResponseSchemas("templates", "pages/system/settings/")
+db: Session = Depends(get_db)
+req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
+req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
+req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
+c_user_scope = Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])]
 
 
 class PathJS(str, Enum):
@@ -33,19 +36,14 @@ from app.repositories.__system__ import SystemRepository, ChangeLogRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_settings(
-    req: Request,
-    c_user: Annotated[UserSchemas, Depends(get_user_active)],
-    db: Session = Depends(get_db),
-):
-    return pageResponse.response("index.html", req, data={"app": SystemRepository(db).get()})
+def page_system_settings(req: req_page, db=db):
+    pageResponse.addData("app", SystemRepository(db).get())
+    return pageResponse.response("index.html")
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
-def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-    return pageResponse.response(pathFile, req)
+def page_js(req: req_nonAuth, pathFile: PathJS):
+    return pageResponse.response(pathFile)
 
 
 ###DATATABLES##########################################################################################################
@@ -55,15 +53,7 @@ from datatables import DataTable
 
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
-def get_datatables(
-    params: dict[str, Any],
-    cId: str,
-    sId: str,
-    request: Request,
-) -> dict[str, Any]:
-    if request.state.clientId != cId or request.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-
+def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
     query = select(ChangeLogTable, ChangeLogTable.id.label("DT_RowId")).where(ChangeLogTable.deleted_at == None).order_by(ChangeLogTable.id.desc())
 
     datatable: DataTable = DataTable(
@@ -82,17 +72,7 @@ from app.schemas.__system__.changelog import changeLogsSchemas, changeLogsSave
 
 
 @router.post("/{cId}/{sId}", response_model=SettingsSchemas, status_code=202, include_in_schema=False)
-async def update(
-    dataIn: SettingsSchemas,
-    cId: str,
-    sId: str,
-    req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
-    db: Session = Depends(get_db),
-):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-
+async def update(dataIn: SettingsSchemas, req: req_depends, c_user: c_user_scope, db=db):
     repo = SystemRepository(db)
     data = repo.get()
     if data is None:
@@ -102,40 +82,19 @@ async def update(
 
 
 @router.post("/{cId}/{sId}/changelog", response_model=changeLogsSchemas, status_code=202, include_in_schema=False)
-async def changelog_create(
-    dataIn: changeLogsSchemas,
-    cId: str,
-    sId: str,
-    req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
-    db: Session = Depends(get_db),
-):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-
+async def changelog_create(dataIn: changeLogsSchemas, req: req_depends, c_user: c_user_scope, db=db):
     repo = ChangeLogRepository(db)
-
     datas = changeLogsSave.model_validate(dataIn.model_dump())
-    datas.created_user = current_user.username
+    datas.created_user = c_user.username
 
     return repo.create(datas.model_dump())
 
 
-@router.delete("/{cId}/{sId}/{idCl}", status_code=202, include_in_schema=False)
-async def delete(
-    idCl: int,
-    cId: str,
-    sId: str,
-    req: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
-    db: Session = Depends(get_db),
-):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-
+@router.delete("/{cId}/{sId}/{id:int}", status_code=202, include_in_schema=False)
+async def delete(id: int, req: req_depends, c_user: c_user_scope, db=db):
     repo = ChangeLogRepository(db)
-    data = repo.get(idCl)
+    data = repo.get(id)
     if data is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
-    repo.delete(current_user.username, idCl)
+    repo.delete(c_user.username, id)

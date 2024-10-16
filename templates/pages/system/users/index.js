@@ -7,7 +7,7 @@ $(document).ready(function () {
             "url": '/page/users/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
-            }
+            }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
         },
         "paging": false,
         "lengthChange": false,

@@ -1,17 +1,15 @@
-from typing import Annotated, Union, Any, Literal
+from typing import Annotated, Any
 from enum import Enum
 import datetime
 
-from fastapi import APIRouter, Request, Security, Depends, HTTPException
+from fastapi import APIRouter, Security, Depends
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.db.logs import get_db
 from app.schemas import PageResponseSchemas
-
 from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import page_get_current_active_user as get_user_active, get_current_active_user
+from app.services.__system__.auth import get_current_active_user
 
 
 router = APIRouter(
@@ -20,6 +18,11 @@ router = APIRouter(
 )
 
 pageResponse = PageResponseSchemas("templates", "pages/system/logs/")
+db: Session = Depends(get_db)
+req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
+req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
+req_nonUser = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
+c_user_scope = Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])]
 
 
 class PathJS(str, Enum):
@@ -31,19 +34,15 @@ from app.repositories.__system__ import LogsRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_logs(
-    req: Request,
-    c_user: Annotated[UserSchemas, Depends(get_user_active)],
-):
+def page_system_logs(req: req_page):
     repo = LogsRepository(datetime.datetime.now())
-    return pageResponse.response("index.html", req, data={"ip": repo.getIPs()})
+    pageResponse.addData("ip", repo.getIPs())
+    return pageResponse.response("index.html")
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
-def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-    return pageResponse.response(pathFile, req)
+def page_js(req: req_nonUser, pathFile: PathJS):
+    return pageResponse.response(pathFile)
 
 
 ###DATATABLES##########################################################################################################
@@ -53,16 +52,7 @@ from datatables import DataTable
 
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
-def get_datatables(
-    params: dict[str, Any],
-    cId: str,
-    sId: str,
-    request: Request,
-    current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
-) -> dict[str, Any]:
-    if request.state.clientId != cId or request.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-
+def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
     tahunbulan = datetime.datetime.strptime(params["search"]["time_start"], "%Y-%m-%d %H:%M:%S")
     fileDB_ENGINE = "./files/database/db/logs_{}.db".format(tahunbulan.strftime("%Y-%m"))
     DB_ENGINE = "sqlite:///" + fileDB_ENGINE

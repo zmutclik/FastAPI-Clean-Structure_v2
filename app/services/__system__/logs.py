@@ -40,8 +40,10 @@ class LogServices:
 
     async def start(self, request: Request):
         request.state.username = None
-        client_id = request.state.clientId = self.generateId(request, self.clientId_key)
-        session_id = request.state.sessionId = self.generateId(request, self.session_key)
+        client_id = self.generateId(request, self.clientId_key)
+        session_id = self.generateId(request, self.session_key)
+        request.state.clientId = client_id
+        request.state.sessionId = session_id
         try:
             user_agent = parse(request.headers.get("user-agent"))
             platform = user_agent.os.family + user_agent.os.version_string
@@ -71,6 +73,5 @@ class LogServices:
         response.set_cookie(key=self.clientId_key, value=self.data.client_id)
         response.set_cookie(key=self.session_key, value=self.data.session_id)
 
+    def saveLogs(self):
         self.repository.create(self.data.model_dump())
-        
-        

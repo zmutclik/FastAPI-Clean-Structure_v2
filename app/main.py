@@ -64,10 +64,11 @@ from fastapi import BackgroundTasks
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
-    await logs.start(request)
+    request = await logs.start(request)
     response = await call_next(request)
     background_tasks = BackgroundTasks()
-    background_tasks.add_task(logs.finish, request=request, response=response)
+    logs.finish(request=request, response=response)
+    background_tasks.add_task(logs.saveLogs)
     response.background = background_tasks
     return response
 
