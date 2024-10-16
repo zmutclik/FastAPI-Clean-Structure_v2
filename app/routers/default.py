@@ -4,7 +4,7 @@ from starlette.responses import FileResponse
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", include_in_schema=False)
 async def root(request: Request):
     return {"message": "Hello BOZ " + request.client.host + " !!!"}
 
