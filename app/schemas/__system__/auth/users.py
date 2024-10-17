@@ -10,7 +10,8 @@ class UserData(BaseModel):
     email: EmailStr
     full_name: str
     limit_expires: Optional[int] = 30
-    
+
+
 class userloggedin(UserData):
     created_at: Optional[datetime] = None
 
@@ -24,7 +25,6 @@ class UserSave(UserData):
     created_user: Optional[str] = None
 
 
-
 class UserEdit(UserData):
     full_name: str
     limit_expires: Optional[int] = 30
@@ -33,6 +33,11 @@ class UserEdit(UserData):
 
 class UserSchemas(UserSave):
     id: int
+
+
+class GantiPassword(BaseModel):
+    lama: str
+    baru: str = Field(min_length=6, max_length=32)
 
 
 class UserResponse(BaseModel):

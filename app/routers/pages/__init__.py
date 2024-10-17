@@ -1,4 +1,5 @@
 from .__system__.auth.loginPage import router as loginPage
+from .__system__.auth.profilePage import router as profilePage
 from .__system__.userPage import router as userPage
 from .__system__.scopePage import router as scopePage
 from .__system__.repositoryPage import router as repositoryPage
@@ -9,7 +10,6 @@ from .dashboardPage import router as dashboardPage
 
 __all__ = [
     "loginPage",
-    "loginPage",
     ####SYSTEM#############################################################################################################
     "userPage",
     "scopePage",
@@ -19,4 +19,5 @@ __all__ = [
     "documentationPage",
     #######################################################################################################################
     "dashboardPage",
+    "profilePage",
 ]

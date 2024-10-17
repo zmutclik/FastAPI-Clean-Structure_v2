@@ -55,6 +55,7 @@ app.include_router(pages.settingsPage)
 app.include_router(pages.logsPage)
 app.include_router(pages.documentationPage)
 app.include_router(pages.dashboardPage)
+app.include_router(pages.profilePage)
 
 
 ###################################################################################################################

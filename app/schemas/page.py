@@ -13,16 +13,6 @@ from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import page_get_current_active_user, get_current_active_user
 
 
-def PageDepends(
-    req: Request,
-    cId: str,
-    sId: str,
-):
-    if req.state.clientId != cId or req.state.sessionId != sId:
-        raise HTTPException(status_code=404)
-    return req
-
-
 class PageResponseSchemas:
     def __init__(self, path_Jinja2Templates: str, path_template: str):
         self.templates = Jinja2Templates(directory=path_Jinja2Templates)
@@ -35,16 +25,6 @@ class PageResponseSchemas:
             return "application/javascript"
         else:
             return "text/html"
-
-    def get_user(self, username: str):
-        if username is not None:
-            with engine_db.begin() as connection:
-                with Session(bind=connection) as db:
-                    duser = UsersRepository(db).get(username)
-                    if duser:
-                        suser = userloggedin.model_validate(duser.__dict__)
-                        return suser.model_dump()
-        return None
 
     def page(self, req: Request, user: Annotated[UserSchemas, Depends(page_get_current_active_user)]):
         self.req = req

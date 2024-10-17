@@ -1,6 +1,5 @@
-from .page import PageResponseSchemas, PageDepends
+from .page import PageResponseSchemas
 
 __all__ = [
     "PageResponseSchemas",
-    "PageDepends",
 ]
