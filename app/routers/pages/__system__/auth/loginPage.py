@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core import config
 from app.core.db.auth import get_db
+from app.helpers.Exceptions import RequiresLoginException
 
 from app.repositories.__system__.auth import UsersRepository, ScopesRepository
 from app.services.__system__.auth import authenticate_user, create_cookie_access_token
@@ -64,3 +65,14 @@ def post_login(
 
     sleep(1)
     create_cookie_access_token(db, response, user)
+
+
+from app.core import config
+
+
+@router.get("/logout/{username}", status_code=201, include_in_schema=False)
+def ganti_password(res: Response):
+    res.delete_cookie(key=config.SESSION_KEY)
+    res.delete_cookie(key=config.TOKEN_KEY)
+    sleep(1)
+    raise RequiresLoginException(f"/auth/login")

@@ -3,7 +3,7 @@ from enum import Enum
 from datetime import datetime
 from time import sleep
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
@@ -47,7 +47,6 @@ def page_js(req: req_nonAuth, pathFile: PathJS, id: int = None):
 from app.schemas.__system__.auth.users import GantiPassword, ProfileSetting, UserResponse
 from app.services.__system__.auth.password import verify_password, get_password_hash
 
-
 @router.post("/{cId}/{sId}/gantipassword/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
 def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):
     repo = UsersRepository(db)
@@ -72,7 +71,7 @@ def setting(id: int, dataIn: ProfileSetting, req: req_depends, db=db):
     dtup = {"full_name": dataIn.full_name, "updated_at": datetime.now()}
     if not repo.get(dataIn.username):
         dtup["username"] = dataIn.username
-        
+
     if not repo.getByEmail(dataIn.email):
         dtup["email"] = dataIn.email
 
