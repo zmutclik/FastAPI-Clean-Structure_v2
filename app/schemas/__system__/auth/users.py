@@ -40,6 +40,12 @@ class GantiPassword(BaseModel):
     baru: str = Field(min_length=6, max_length=32)
 
 
+class ProfileSetting(BaseModel):
+    email: EmailStr
+    full_name: str
+    username: str
+
+
 class UserResponse(BaseModel):
     id: int
     username: str

@@ -58,7 +58,7 @@
 
                             <p class="text-muted text-center">Software Engineer</p>
 
-                            <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                            <button type="button" class="btn btn-primary btn-block" disabled><b>Follow</b></a>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -67,7 +67,7 @@
                     <!-- About Me Box -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">About Me</h3>
+                            <h3 class="card-title">Tentang Saya</h3>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -84,21 +84,38 @@
                     <div class="card">
                         <div class="card-header p-2">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#nav-activity" role="tab" aria-controls="nav-activity" aria-selected="true">Activity</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#nav-timeline" role="tab" aria-controls="nav-timeline" aria-selected="true">Timeline</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="true">Settings</a></li>
+                                <li class="nav-item"><a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#nav-activity" role="tab" aria-controls="nav-activity" aria-selected="true">Activity</a></li>
+                                <li class="nav-item"><a class="nav-link disabled" href="#" data-bs-toggle="tab" data-bs-target="#nav-timeline" role="tab" aria-controls="nav-timeline" aria-selected="true">Timeline</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="true">Settings</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#nav-gantipas" role="tab" aria-controls="nav-gantipas" aria-selected="true">Ganti Password</a></li>
                             </ul>
                         </div><!-- /.card-header -->
                         <div class="card-body">
                             <div class="tab-content">
-                                <div class="active tab-pane" id="nav-activity" role="tabpanel" aria-labelledby="nav-activity-tab" tabindex="0">
+                                <div class="tab-pane" id="nav-activity" role="tabpanel" aria-labelledby="nav-activity-tab" tabindex="0">
                                 </div>
                                 <!-- /.tab-activity -->
                                 <div class="tab-pane" id="nav-timeline" role="tabpanel" aria-labelledby="nav-timeline-tab" tabindex="0">
                                 </div>
                                 <!-- /.tab-timeline -->
-                                <div class="tab-pane" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab" tabindex="0">
+                                <div class="tab-pane active" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab" tabindex="0">
+                                    <form id="form_setting">
+                                        <div class="mb-3">
+                                            <label for="fousername" class="form-label">Nama Akun</label>
+                                            <input type="text" class="form-control" id="fousername" name="username" placeholder="username" {% if data %} value="{{data.username}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="foemail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="foemail" name="email" placeholder="email@contoh.com" {% if data %} value="{{data.email}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fofull_name" class="form-label">Nama Lengkap</label>
+                                            <input type="text" class="form-control" id="fofull_name" name="full_name" placeholder="Nama Lengkap" {% if data %} value="{{data.full_name}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3 mt-5 float-end">
+                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                        </div>
+                                    </form>
                                 </div>
                                 <!-- /.tab-settings -->
                                 <div class="tab-pane" id="nav-gantipas" role="tabpanel" aria-labelledby="nav-gantipas-tab" tabindex="0">
@@ -162,4 +179,5 @@
     });
 </script>
 <script src="/page/profile/{{clientId}}/{{sessionId}}/{{app_version}}/ganti_password.js?id={{data.id}}"></script>
+<script src="/page/profile/{{clientId}}/{{sessionId}}/{{app_version}}/setting.js?id={{data.id}}"></script>
 {% endblock javascripts %}

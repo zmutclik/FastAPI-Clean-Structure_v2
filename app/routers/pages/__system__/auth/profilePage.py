@@ -1,6 +1,7 @@
 from typing import Annotated
 from enum import Enum
 from datetime import datetime
+from time import sleep
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -22,6 +23,7 @@ req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNon
 
 class PathJS(str, Enum):
     indexJs = "ganti_password.js"
+    settingJs = "setting.js"
 
 
 ###PAGES###############################################################################################################
@@ -42,11 +44,11 @@ def page_js(req: req_nonAuth, pathFile: PathJS, id: int = None):
 
 
 ###CRUD################################################################################################################
-from app.schemas.__system__.auth import UserResponse, GantiPassword
+from app.schemas.__system__.auth.users import GantiPassword, ProfileSetting, UserResponse
 from app.services.__system__.auth.password import verify_password, get_password_hash
 
 
-@router.post("/{cId}/{sId}/gantipassword/{id:int}", status_code=201, include_in_schema=False)
+@router.post("/{cId}/{sId}/gantipassword/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
 def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):
     repo = UsersRepository(db)
     data = repo.getById(id)
@@ -56,4 +58,23 @@ def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):
     if not verify_password(dataIn.lama, data.hashed_password):
         raise HTTPException(status_code=400, detail="Password Lama Salah.")
 
-    repo.update(id, {"hashed_password": get_password_hash(dataIn.baru), "updated_at": datetime.now()})
+    sleep(1)
+    return repo.update(id, {"hashed_password": get_password_hash(dataIn.baru), "updated_at": datetime.now()})
+
+
+@router.post("/{cId}/{sId}/setting/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
+def setting(id: int, dataIn: ProfileSetting, req: req_depends, db=db):
+    repo = UsersRepository(db)
+    data = repo.getById(id)
+    if data is None:
+        raise HTTPException(status_code=400, detail="User tidak Terdaftar.")
+
+    dtup = {"full_name": dataIn.full_name, "updated_at": datetime.now()}
+    if not repo.get(dataIn.username):
+        dtup["username"] = dataIn.username
+        
+    if not repo.getByEmail(dataIn.email):
+        dtup["email"] = dataIn.email
+
+    sleep(1)
+    return repo.update(id, dtup)
