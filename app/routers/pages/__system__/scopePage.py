@@ -41,7 +41,7 @@ def page_system_scopes(req: req_page):
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
 def page_system_scopes_add(req: req_page):
-    pageResponse.response("form.html")
+    return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)

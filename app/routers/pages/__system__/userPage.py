@@ -53,7 +53,8 @@ def page_system_users_form(req: req_depends, db=db):
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
 def page_system_users_form(id: int, req: req_depends, db=db):
     pageResponse.addData("userscopes", UserScopesRepository(db).getAllByUser(id))
-    pageResponse.response("form.html")
+    pageResponse.addData("user", UsersRepository(db).getById(id))
+    return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
