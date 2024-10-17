@@ -34,7 +34,7 @@ def form_login(request: Request, next: str = None):
 
 @router.get("/{clientId}/{sessionId}/login.js", include_in_schema=False)
 def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
-    if next is None:
+    if next is None or next == "None":
         next = "/page/dashboard"
     if request.state.clientId == clientId and request.state.sessionId == sessionId:
         return templates.TemplateResponse(
