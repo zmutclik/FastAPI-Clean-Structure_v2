@@ -34,7 +34,7 @@ class LogServices:
     def generateId(self, request: Request, key: str):
         clientId = request.cookies.get(key)
         if clientId is None:
-            clientId = "".join(random.choices(string.ascii_letters + string.digits, k=32))
+            clientId = "".join(random.choices(string.ascii_letters + string.digits, k=8))
         request.state.clientId = clientId
         return clientId
 

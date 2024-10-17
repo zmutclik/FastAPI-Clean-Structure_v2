@@ -47,7 +47,7 @@ if os.path.exists(DB_FILE):
                     SystemTable(
                         **{
                             "id": 1,
-                            "APP_NAME": "FastAPI-Clean-Structure",
+                            "APP_NAME": "FastAPI cleanStructure",
                             "APP_DESCRIPTION": "This is a very fancy project, with auto docs for the API and everything.",
                             "CLIENTID_KEY": "fastapi-clean-structure_id",
                             "SESSION_KEY": "fastapi-clean-structure_sesi",
