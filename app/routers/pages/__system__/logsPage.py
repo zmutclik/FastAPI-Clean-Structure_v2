@@ -42,6 +42,7 @@ def page_system_logs(req: req_page):
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(req: req_nonUser, pathFile: PathJS):
+    req.state.issave = False
     return pageResponse.response(pathFile)
 
 

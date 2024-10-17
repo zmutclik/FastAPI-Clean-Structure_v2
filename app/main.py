@@ -69,7 +69,7 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     background_tasks = BackgroundTasks()
     logs.finish(request=request, response=response)
-    background_tasks.add_task(logs.saveLogs)
+    background_tasks.add_task(logs.saveLogs, request)
     response.background = background_tasks
     return response
 

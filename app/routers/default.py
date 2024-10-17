@@ -10,5 +10,6 @@ async def root(request: Request):
 
 
 @router.get("/favicon.ico", include_in_schema=False)
-def favicon():
+def favicon(request: Request):
+    request.state.issave = False
     return FileResponse("files/static/favicon.ico")

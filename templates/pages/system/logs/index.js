@@ -41,7 +41,11 @@ $(document).ready(function () {
                 }, "title": "PLATFORM",
             },
             { "data": "path", "title": "PATH", },
-            { "data": "ipaddress", "title": "IP", },
+            {
+                "data": function (source, type, val) {
+                    return "<div class=\"row\"><div class=\"col\">" + source.method + "</div></div><div class=\"row\"><div class=\"col\">" + source.ipaddress + "</div></div>";
+                }, "title": "IP",
+            },
             { "data": "username", "title": "USERS", },
             { "data": "status_code", "title": "CODE", },
             {

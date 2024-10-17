@@ -59,6 +59,7 @@ def page_system_users_form(id: int, req: req_depends, db=db):
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(req: req_nonAuth, pathFile: PathJS):
+    req.state.issave = False
     return pageResponse.response(pathFile)
 
 

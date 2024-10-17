@@ -40,6 +40,7 @@ class LogServices:
 
     async def start(self, request: Request):
         request.state.username = None
+        request.state.issave = True
         client_id = self.generateId(request, self.clientId_key)
         session_id = self.generateId(request, self.session_key)
         request.state.clientId = client_id
@@ -73,5 +74,6 @@ class LogServices:
         response.set_cookie(key=self.clientId_key, value=self.data.client_id)
         response.set_cookie(key=self.session_key, value=self.data.session_id)
 
-    def saveLogs(self):
-        self.repository.create(self.data.model_dump())
+    def saveLogs(self, request):
+        if request.state.issave:
+            self.repository.create(self.data.model_dump())
