@@ -7,6 +7,7 @@ from app.helpers import getJSON
 from app.core import config
 
 # from core import LogServices, main_logs, main_auth, routers_page as core_page
+from app.routers import root as root
 from app.services.__system__ import LogServices
 
 
@@ -37,15 +38,16 @@ app.add_middleware(
 )
 
 ###################################################################################################################
-from app.routers import api, pages, default as routerDefault
+from app.routers import api, pages, root
 
 ### STATIC ###
 app.mount("/static", StaticFiles(directory="files/static", html=False), name="static")
 
 
 ### MAIN API ###
-app.include_router(routerDefault.router)
+app.include_router(root.router)
 app.include_router(api.token)
+app.include_router(api.me)
 
 ## MAIN PAGE ###
 app.mount("/page", pages.app)
