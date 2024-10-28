@@ -13,7 +13,7 @@ from app.services.__system__.auth import get_current_active_user
 
 
 router = APIRouter(
-    prefix="/page/repository",
+    prefix="/repository",
     tags=["FORM"],
 )
 

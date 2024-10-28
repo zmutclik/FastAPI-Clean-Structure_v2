@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from app.schemas import PageResponseSchemas
 
 router = APIRouter(
-    prefix="/page/documentation",
+    prefix="/documentation",
     tags=["FORM"],
 )
 

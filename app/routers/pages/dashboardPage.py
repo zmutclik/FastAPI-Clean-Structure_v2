@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse
 from app.schemas import PageResponseSchemas
 
 router = APIRouter(
-    prefix="/page",
+    prefix="",
     tags=["FORM"],
 )
 pageResponse = PageResponseSchemas("templates", "pages/dashboard/")

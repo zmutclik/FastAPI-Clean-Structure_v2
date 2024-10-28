@@ -11,7 +11,7 @@ from app.core.db.auth import engine_db, get_db
 from app.schemas import PageResponseSchemas
 
 router = APIRouter(
-    prefix="/page/profile",
+    prefix="/profile",
     tags=["FORM"],
 )
 pageResponse = PageResponseSchemas("templates", "pages/auth/profile/")

@@ -9,8 +9,6 @@ from app.core import config
 # from core import LogServices, main_logs, main_auth, routers_page as core_page
 from app.services.__system__ import LogServices
 
-from app.routers import api, pages, default as routerDefault
-
 
 def create_app() -> FastAPI:
     current_app = FastAPI(
@@ -39,23 +37,19 @@ app.add_middleware(
 )
 
 ###################################################################################################################
+from app.routers import api, pages, default as routerDefault
+
 ### STATIC ###
 app.mount("/static", StaticFiles(directory="files/static", html=False), name="static")
+
 
 ### MAIN API ###
 app.include_router(routerDefault.router)
 app.include_router(api.token)
 
 ## MAIN PAGE ###
+app.mount("/page", pages.app)
 app.include_router(pages.loginPage)
-app.include_router(pages.userPage)
-app.include_router(pages.scopePage)
-app.include_router(pages.repositoryPage)
-app.include_router(pages.settingsPage)
-app.include_router(pages.logsPage)
-app.include_router(pages.documentationPage)
-app.include_router(pages.dashboardPage)
-app.include_router(pages.profilePage)
 
 
 ###################################################################################################################
