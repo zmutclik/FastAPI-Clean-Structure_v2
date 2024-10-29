@@ -9,6 +9,7 @@ from . import BaseAuth as Base
 from app.models.__system__ import UsersTable
 from app.models.__system__ import ScopeTable
 from app.models.__system__ import UserScopeTable
+from app.models.__system__ import SessionTable
 
 
 now = datetime.now()

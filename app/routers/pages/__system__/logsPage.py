@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.db.logs import get_db
 from app.schemas import PageResponseSchemas
 from app.schemas.__system__.auth import UserSchemas
-from app.services.__system__.auth import get_current_active_user
+from app.services.__system__.auth import get_active_user
 
 
 router = APIRouter(
@@ -22,7 +22,7 @@ db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
 req_nonUser = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
-c_user_scope = Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])]
+c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=["admin"])]
 
 
 class PathJS(str, Enum):

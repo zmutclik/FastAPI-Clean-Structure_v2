@@ -1,14 +1,11 @@
-from fastapi import FastAPI, Request, Response, Depends, status
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.staticfiles import StaticFiles
 
 from app.helpers import getJSON
 from app.core import config
 
-# from core import LogServices, main_logs, main_auth, routers_page as core_page
 from app.routers import root as root
-from app.services.__system__ import LogServices
 
 
 def create_app() -> FastAPI:
@@ -56,6 +53,7 @@ app.include_router(pages.loginPage)
 
 ###################################################################################################################
 from fastapi import BackgroundTasks
+from app.services.__system__ import LogServices
 
 
 @app.middleware("http")
@@ -69,8 +67,7 @@ async def add_process_time_header(request: Request, call_next):
     response.background = background_tasks
     return response
 
-
-# ###################################################################################################################
+####################################################################################################################
 from fastapi.responses import RedirectResponse
 from app.helpers.Exceptions import RequiresLoginException
 

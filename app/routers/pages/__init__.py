@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from .__system__.auth.loginPage import router as loginPage
 from .__system__.auth.profilePage import router as profilePage
 from .__system__.userPage import router as userPage
@@ -33,3 +33,13 @@ app.include_router(repositoryPage)
 app.include_router(settingsPage)
 app.include_router(logsPage)
 app.include_router(documentationPage)
+
+
+# ###################################################################################################################
+from fastapi.responses import RedirectResponse
+from app.helpers.Exceptions import RequiresLoginException
+
+
+@app.exception_handler(RequiresLoginException)
+async def requires_login(request: Request, _: Exception):
+    return RedirectResponse(_.nextRouter)

@@ -1,16 +1,36 @@
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
-
 import string
 import random
+from typing import Union
+from pydantic import BaseModel
 
 from fastapi import Request, Response
+from sqlalchemy.orm import Session
 from starlette.routing import Match
 from user_agents import parse
 
-from app.schemas.__system__.logs import dataLogs
 from app.repositories.__system__.logs import LogsRepository
+from app.repositories.__system__.auth import SessionRepository
+from app.core.db.auth import engine_db
+from app.core import config
+
+
+class dataLogs(BaseModel):
+    startTime: datetime
+    app: str
+    client_id: Union[str, None] = None
+    session_id: Union[str, None] = None
+    platform: str
+    browser: str
+    path: str
+    path_params: Union[str, None] = None
+    method: str
+    ipaddress: str
+    username: Union[str, None] = None
+    status_code: Union[int, None] = None
+    process_time: Union[float, None] = None
 
 
 class LogServices:
@@ -31,20 +51,22 @@ class LogServices:
                     path_params[name] = value
         return json.dumps(path_params)
 
+    def generateNewSession(self, request: Request):
+        request.state.sessionId = self.sessionID = "".join(random.choices(string.ascii_letters + string.digits, k=8))
+        return self.sessionID
+
     def generateId(self, request: Request, key: str):
-        clientId = request.cookies.get(key)
-        if clientId is None:
-            clientId = "".join(random.choices(string.ascii_letters + string.digits, k=8))
-        request.state.clientId = clientId
-        return clientId
+        id_ = request.cookies.get(key)
+        if id_ is None:
+            id_ = "".join(random.choices(string.ascii_letters + string.digits, k=8))
+        return id_
 
     async def start(self, request: Request):
         request.state.username = None
         request.state.issave = True
-        client_id = self.generateId(request, self.clientId_key)
-        session_id = self.generateId(request, self.session_key)
-        request.state.clientId = client_id
-        request.state.sessionId = session_id
+        request.state.clientId = self.clientID = client_id = self.generateId(request, self.clientId_key)
+        request.state.sessionId = self.sessionID = session_id = self.generateId(request, self.session_key)
+        request.state.app = self.APP_NAME
         try:
             user_agent = parse(request.headers.get("user-agent"))
             platform = user_agent.os.family + user_agent.os.version_string
@@ -52,6 +74,9 @@ class LogServices:
         except:
             platform = ""
             browser = ""
+
+        request.state.platform = platform
+        request.state.browser = browser
         self.data = dataLogs(
             startTime=datetime.fromtimestamp(self.startTime),
             app=self.APP_NAME,
@@ -70,9 +95,8 @@ class LogServices:
         self.data.username = request.state.username
         self.data.status_code = response.status_code
         self.data.process_time = time.time() - self.startTime
-
         response.set_cookie(key=self.clientId_key, value=self.data.client_id)
-        response.set_cookie(key=self.session_key, value=self.data.session_id)
+        response.set_cookie(key=self.session_key, value=request.state.sessionId)
 
     def saveLogs(self, request):
         if request.state.issave:

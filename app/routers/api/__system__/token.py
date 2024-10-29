@@ -1,13 +1,12 @@
 from typing import Annotated
 
-from fastapi import Form, Depends, APIRouter, HTTPException, Request, Security
+from fastapi import Depends, APIRouter, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from app.core import config
 from app.core.db.auth import get_db
 
-from app.services.__system__.auth import authenticate_user, create_user_access_token
+from app.services.__system__.auth import authenticate_user, token_create
 from app.schemas.__system__.auth import Token
 
 
@@ -23,5 +22,5 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token = create_user_access_token(db, user, form_data.scopes)
+    access_token = token_create(db, user, form_data.scopes)
     return {"access_token": access_token, "token_type": "bearer"}

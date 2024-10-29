@@ -46,7 +46,7 @@ def page_js(req: req_nonAuth, pathFile: PathJS, id: int = None):
 
 ###CRUD################################################################################################################
 from app.schemas.__system__.auth.users import GantiPassword, ProfileSetting, UserResponse
-from app.services.__system__.auth.password import verify_password, get_password_hash
+from app.services.__system__.auth import verify_password, get_password_hash
 
 @router.post("/{cId}/{sId}/gantipassword/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
 def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):

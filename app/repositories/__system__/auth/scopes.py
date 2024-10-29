@@ -8,15 +8,6 @@ class ScopesRepository:
     def __init__(self, db_session: Session) -> None:
         self.session: Session = db_session
 
-    def oauth2_scheme(self):
-        ScopeList = {}
-        for item in self.all():
-            ScopeList[item.scope] = item.desc
-        return OAuth2PasswordBearer(
-            tokenUrl="/auth/token",
-            scopes=ScopeList,
-        )
-
     def get(self, scope: str):
         return self.session.query(MainTable).filter(MainTable.scope == scope).first()
 

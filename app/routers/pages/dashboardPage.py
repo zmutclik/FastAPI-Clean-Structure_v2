@@ -1,9 +1,6 @@
 from typing import Annotated
 
-from fastapi import (
-    APIRouter,
-    Depends,
-)
+from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 
 from app.schemas import PageResponseSchemas

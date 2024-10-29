@@ -6,7 +6,7 @@ var formLogin = $("#formLogin").validate({
     errorElement: 'div',
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
-        element.after(error);
+        element.next().after(error);
     },
     highlight: function (element, errorClass, validClass) {
         $(element).addClass('is-invalid');
@@ -26,10 +26,25 @@ $(document).ready(function () {
                     window.location.href = "{{nextpage}}";
                 })
                 .catch(function (error) {
-                    formLogin.showErrors({
-                        "email": error.response.data.detail,
-                        "password": error.response.data.detail,
-                    });
+                    if (error.status == 401 || error.status == 400) {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            title: error.response.data.detail,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then((result) => {
+                            if (error.response.data.detail.includes("Session"))
+                                window.location.reload(true);
+                        });
+                    }
+                    if (error.status == 422) {
+                        de = {}
+                        $.each(error.response.data.detail, function (i, v) {
+                            de[v.loc[1]] = v["msg"];
+                        });
+                        formLogin.showErrors(de);
+                    }
                 })
                 .finally(() => {
                     $("#formLogin").LoadingOverlay("hide");

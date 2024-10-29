@@ -6,6 +6,7 @@ from .userscope import UserScopeTable
 from .system import SystemTable
 from .changelog import ChangeLogTable
 from .repository import RepositoryTable
+from .auth import SessionTable
 
 __all__ = [
     "TableLogs",
@@ -14,6 +15,7 @@ __all__ = [
     "ScopeTable",
     "UsersTable",
     "UserScopeTable",
+    "SessionTable",
     #############################################
     "SystemTable",
     "ChangeLogTable",
