@@ -84,16 +84,15 @@ async def get_pages_user(request: Request):
         raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
     token_data = token_decode(token, RequiresLoginException(f"/auth/login?next=" + request.url.path))
 
+    sess = SessionRepository().get(sessionId)
+    if sess is None:
+        raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
+
+    if sess.client_id != clientId or sess.username != token_data.username:
+        raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
+
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:
-            sessRepo = SessionRepository(db)
-            sess = sessRepo.get(sessionId)
-            if sess is None:
-                raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
-
-            if sess.client_id != clientId or sess.username != token_data.username:
-                raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
-
             user = UsersRepository(db).get(token_data.username)
             if user is None:
                 raise RequiresLoginException(f"/auth/login?next=" + request.url.path)

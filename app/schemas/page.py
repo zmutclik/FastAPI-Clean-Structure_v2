@@ -1,14 +1,14 @@
 from typing import Annotated
-from fastapi import Request, HTTPException, Depends
+from fastapi import Request, HTTPException, Depends, Response
 from app.core import config
 from fastapi.templating import Jinja2Templates
 
 from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import get_pages_user
 
-from sqlalchemy.orm import Session
-from app.core.db.auth import engine_db
 from app.repositories.__system__.auth import SessionRepository
+
+import threading
 
 
 class PageResponseSchemas:
@@ -24,14 +24,13 @@ class PageResponseSchemas:
         else:
             return "text/html"
 
-    def page(self, req: Request, user: Annotated[UserSchemas, Depends(get_pages_user)]):
+    def page(self, req: Request, res: Response, user: Annotated[UserSchemas, Depends(get_pages_user)]):
         self.req = req
         self.user = user
         self.initContext()
 
-        with engine_db.begin() as connection:
-            with Session(bind=connection) as db:
-                SessionRepository(db).updateEndTime(req.state.sessionId)
+        thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
+        thread.start()
 
         return req
 

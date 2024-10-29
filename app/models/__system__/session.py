@@ -5,7 +5,7 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.core.db import BaseAuth as Base
+from app.core.db import BaseSeSS as Base
 
 
 class SessionTable(Base):
@@ -19,4 +19,20 @@ class SessionTable(Base):
     browser = Column(String(100), index=True)
     startTime = Column(DateTime)
     EndTime = Column(DateTime)
+    LastPage = Column(String(256), index=True)
+    active = Column(Boolean, default=True)
+
+
+class SessionEndTable(Base):
+    __tablename__ = "sessionEnd"
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(String(32), index=True)
+    session_id = Column(String(32), index=True)
+    username = Column(String(32), index=True)
+    app = Column(String(100), index=True)
+    platform = Column(String(100), index=True)
+    browser = Column(String(100), index=True)
+    startTime = Column(DateTime)
+    EndTime = Column(DateTime)
+    LastPage = Column(String(256), index=True)
     active = Column(Boolean, default=True)

@@ -12,10 +12,11 @@ from app.core.db.auth import get_db
 from app.helpers.Exceptions import RequiresLoginException
 from app.services.__system__ import LogServices
 
-from app.repositories.__system__.auth import UsersRepository, SessionRepository
+from app.repositories.__system__.auth import UsersRepository, SessionRepository, SessionEndRepository
 from app.services.__system__.auth import authenticate_user, user_cookie_token
 from app.schemas.__system__.auth import loginSchemas
 from app.core import config
+import threading
 
 router = APIRouter(
     prefix="/auth",
@@ -30,7 +31,7 @@ def form_login(
     next: str = None,
     db: Session = Depends(get_db),
 ):
-    sessrepo = SessionRepository(db)
+    sessrepo = SessionRepository()
     logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
     sess = sessrepo.get(request.state.sessionId)
     if sess is None:
@@ -73,9 +74,8 @@ def post_login(
 ):
     sleep(1)
     userrepo = UsersRepository(db)
-    sessrepo = SessionRepository(db)
 
-    sess = sessrepo.get(request.state.sessionId)
+    sess = SessionRepository().get(request.state.sessionId)
     if sess is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session Error.")
     if sess.EndTime < datetime.now():
@@ -104,8 +104,9 @@ def ganti_password(
     res.delete_cookie(key=config.SESSION_KEY)
     res.delete_cookie(key=config.TOKEN_KEY)
 
-    sessrepo = SessionRepository(db)
-    sess = sessrepo.get(request.state.sessionId)
-    sessrepo.update(sess.id, {"active": False})
+    SessionRepository().disable(request.state.sessionId)
+    thread = threading.Thread(target=SessionRepository().migrasi())
+    thread.start()
+
     sleep(1)
     raise RequiresLoginException(f"/auth/login")

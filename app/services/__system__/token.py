@@ -71,4 +71,4 @@ def user_cookie_token(request: Request, response: Response, userID, userName, ti
             access_token = user_access_token(userID, userName, userScope, timeout)
             response.set_cookie(key=TOKEN_KEY, value=access_token)
 
-            SessionRepository(db).update(sessionID, {"username": userName, "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED)})
+            SessionRepository().update(sessionID, {"username": userName, "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED)})

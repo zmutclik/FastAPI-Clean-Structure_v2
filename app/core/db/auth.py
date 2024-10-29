@@ -9,11 +9,10 @@ from . import BaseAuth as Base
 from app.models.__system__ import UsersTable
 from app.models.__system__ import ScopeTable
 from app.models.__system__ import UserScopeTable
-from app.models.__system__ import SessionTable
 
 
 now = datetime.now()
-fileDB_ENGINE = "./files/database/db/_a_u_t_h.db"
+fileDB_ENGINE = "./files/database/db/_auth.db"
 DB_ENGINE = "sqlite:///" + fileDB_ENGINE
 
 engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})

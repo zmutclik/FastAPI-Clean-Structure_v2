@@ -9,7 +9,7 @@ from . import BaseSysT as Base
 from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable
 
 
-DB_FILE = "./files/database/db/_s_y_s_t_e_m.db"
+DB_FILE = "./files/database/db/_system.db"
 DB_ENGINE = "sqlite:///" + DB_FILE
 
 engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})

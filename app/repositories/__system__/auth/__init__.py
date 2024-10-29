@@ -1,7 +1,7 @@
 from .scopes import ScopesRepository
 from .users import UsersRepository
 from .userscopes import UserScopesRepository
-from .session import SessionRepository
+from .session import SessionRepository,SessionEndRepository
 
 
 __all__ = [
