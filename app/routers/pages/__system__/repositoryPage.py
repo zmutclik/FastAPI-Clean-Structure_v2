@@ -98,7 +98,7 @@ from app.schemas.__system__.repository import (
 async def create(dataIn: RepositoryData, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = RepositorySave.model_validate(dataIn.model_dump())
-    data.created_user = req.user.username
+    data.created_user = c_user.username
     cdata = repo.create(data.model_dump())
 
     return cdata

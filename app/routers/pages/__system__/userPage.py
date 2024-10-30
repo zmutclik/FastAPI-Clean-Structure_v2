@@ -123,12 +123,7 @@ async def update_user(dataIn: UserDataIn, id: int, req: req_depends, c_user: c_u
     return userrepo.get(dataUser.username)
 
 
-@router.delete(
-    "/{cId}/{sId}/{id:int}",
-    response_model=UserResponse,
-    status_code=202,
-    include_in_schema=False,
-)
+@router.delete("/{cId}/{sId}/{id:int}", status_code=202, include_in_schema=False)
 async def delete_user(id: int, req: req_depends, c_user: c_user_scope, db=db):
     userrepo = UsersRepository(db)
     dataUser = userrepo.getById(id)

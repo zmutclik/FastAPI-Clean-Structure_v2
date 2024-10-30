@@ -18,6 +18,8 @@ from app.schemas.__system__.auth import registerSchemas, UserRegister
 from app.core import config
 import threading
 
+import requests
+
 router = APIRouter(
     prefix="/auth",
     tags=["FORM"],
@@ -97,4 +99,29 @@ def post_register(
     user = UserRegister.model_validate(dataIn.model_dump())
     user.created_user = "form_register"
     user.hashed_password = get_password_hash(dataIn.password)
-    userrepo.create(user.model_dump())
+    usersaved = userrepo.create(user.model_dump())
+
+    thread = threading.Thread(target=telegram_bot_sendtext, args=(usersaved.username, usersaved.email, usersaved.id))
+    thread.start()
+
+
+def telegram_bot_sendtext(username, email, id):
+    message = """Akun Sukses Terdaftar
+APP : {}
+username : {}
+email : {}
+    """
+
+    message = message.format(config.APP_NAME, username, email, id)
+    bot_token = "8191198552:AAH5xLztrsIgrUyPZL_j5I2HC5M3VvLBqF0"
+    bot_chatID = "28186920"
+    url_param_1 = "sendMessage"
+    url_param_2 = ""
+    url_param_3 = ""
+
+    send_url = "https://api.telegram.org/bot{}/{}?chat_id={}&parse_mode=html{}&text={}{}"
+    send_text = send_url.format(bot_token, url_param_1, bot_chatID, url_param_2, message, url_param_3)
+
+    response = requests.get(send_text)
+
+    return response.json()
