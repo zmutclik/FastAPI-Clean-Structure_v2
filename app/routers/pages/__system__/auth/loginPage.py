@@ -51,7 +51,7 @@ def form_login(
 
 @router.get("/{clientId}/{sessionId}/login.js", include_in_schema=False)
 def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
-    request.state.issave = False
+    request.state.islogsave = False
     if next is None or next == "None":
         next = "/page/dashboard"
     if request.state.clientId == clientId and request.state.sessionId == sessionId:

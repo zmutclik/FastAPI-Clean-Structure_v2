@@ -51,7 +51,7 @@ def form_(
 
 @router.get("/{clientId}/{sessionId}/register.js", include_in_schema=False)
 def js_(clientId: str, sessionId: str, request: Request, next: str = None):
-    request.state.issave = False
+    request.state.islogsave = False
     if next is None or next == "None":
         next = "/page/dashboard"
     if request.state.clientId == clientId and request.state.sessionId == sessionId:
