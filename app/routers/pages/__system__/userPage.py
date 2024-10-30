@@ -76,7 +76,7 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
     datatable: DataTable = DataTable(
         request_params=params,
         table=query,
-        column_names=["DT_RowId", "id", "username", "email", "full_name"],
+        column_names=["DT_RowId", "id", "username", "email", "disabled", "full_name"],
         engine=engine_db,
         # callbacks=callbacks,
     )

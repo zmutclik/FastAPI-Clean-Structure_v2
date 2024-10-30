@@ -49,6 +49,7 @@ app.include_router(api.me)
 ## MAIN PAGE ###
 app.mount("/page", pages.app)
 app.include_router(pages.loginPage)
+app.include_router(pages.registerPage)
 
 
 ###################################################################################################################

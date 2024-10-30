@@ -61,6 +61,15 @@ class LogServices:
             id_ = "".join(random.choices(string.ascii_letters + string.digits, k=8))
         return id_
 
+    def ipaddress(self, request: Request):
+        try:
+            if request.headers.get("X-Real-IP") is not None:
+                return request.headers.get("X-Real-IP") + " @" + request.client.host
+            return request.client.host
+        except:
+            return request.client.host
+        return ""
+
     async def start(self, request: Request):
         request.state.username = None
         request.state.issave = True
@@ -87,7 +96,7 @@ class LogServices:
             path=request.scope["path"],
             path_params=self.parse_params(request),
             method=request.method,
-            ipaddress=request.client.host,
+            ipaddress=self.ipaddress(request),
         )
         return request
 

@@ -36,6 +36,15 @@ class SessionRepository:
         self.session.query(MainTable).filter(or_(MainTable.EndTime < datetime.now(), MainTable.active == False)).delete(synchronize_session=False)
         self.session.commit()
 
+    def ipaddress(self, request: Request):
+        try:
+            if request.headers.get("X-Real-IP") is not None:
+                return request.headers.get("X-Real-IP") + " @" + request.client.host
+            return request.client.host
+        except:
+            return request.client.host
+        return ""
+
     def create(self, request: Request):
         dataIn = {
             "client_id": request.state.clientId,
@@ -46,6 +55,7 @@ class SessionRepository:
             "browser": request.state.browser,
             "startTime": datetime.now(),
             "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED),
+            "ipaddress": self.ipaddress(request),
             "active": True,
         }
         data = MainTable(**dataIn)

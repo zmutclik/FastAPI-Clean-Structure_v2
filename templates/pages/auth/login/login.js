@@ -23,7 +23,14 @@ $(document).ready(function () {
             $("#formLogin").LoadingOverlay("show");
             axios.post('{{clientId}}/{{sessionId}}/login', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
                 .then(function (response) {
-                    window.location.href = "{{nextpage}}";
+                    Swal.fire({
+                        icon: "success",
+                        title: "Akun sukses Login.!",
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = "{{nextpage}}";
+                    });
                 })
                 .catch(function (error) {
                     if (error.status == 401 || error.status == 400) {

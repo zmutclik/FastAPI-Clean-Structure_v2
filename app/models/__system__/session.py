@@ -20,6 +20,7 @@ class SessionTable(Base):
     startTime = Column(DateTime)
     EndTime = Column(DateTime)
     LastPage = Column(String(256), index=True)
+    ipaddress = Column(String(50), index=True)
     active = Column(Boolean, default=True)
 
 
@@ -35,4 +36,5 @@ class SessionEndTable(Base):
     startTime = Column(DateTime)
     EndTime = Column(DateTime)
     LastPage = Column(String(256), index=True)
+    ipaddress = Column(String(50), index=True)
     active = Column(Boolean, default=True)

@@ -20,6 +20,14 @@ $(document).ready(function () {
             { "data": "username", "title": "USERNAME", },
             { "data": "email", "title": "EMAIL", },
             { "data": "full_name", "title": "NAMA", },
+            {
+                "data": function (source, type, val) {
+                    if (source.disabled)
+                        return "Tidak aktif";
+                    else
+                        return "aktif";
+                }, "title": "STATUS",
+            },
 
             { "data": "id", "title": "" },
         ],

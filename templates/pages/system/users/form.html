@@ -69,6 +69,13 @@
                                     <input type="number" class="form-control" name="limit_expires" placeholder="30" {% if user %} value="{{user.limit_expires}}" {% endif %}>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="active" class="form-label">Status Akun</label>
+                                    <select class="form-select" aria-label="Default select" name="disabled">
+                                        <option value="1" {% if user %}{% if user.disabled %} selected {% endif %}{% endif %}>Tidak Aktif</option>
+                                        <option value="0" {% if user %}{% if not user.disabled %} selected {% endif %}{% endif %}>Aktif</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label for="limit_expires" class="form-label">Daftar Scope</label>
                                     <div class="card">
                                         <div class="card-body">

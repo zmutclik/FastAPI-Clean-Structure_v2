@@ -3,13 +3,14 @@ from pydantic import BaseModel, Json, Field, EmailStr
 from datetime import date, time, datetime
 
 from .scope import Scopes
+from app.core import config
 
 
 class UserData(BaseModel):
     username: str
     email: EmailStr
     full_name: str
-    limit_expires: Optional[int] = 30
+    limit_expires: Optional[int] = config.TOKEN_EXPIRED
 
 
 class userloggedin(UserData):
@@ -17,6 +18,7 @@ class userloggedin(UserData):
 
 
 class UserDataIn(UserData):
+    disabled: bool
     userScopes: List[int]
 
 
@@ -25,10 +27,15 @@ class UserSave(UserData):
     created_user: Optional[str] = None
 
 
+class UserRegister(UserSave):
+    disabled: bool = True
+
+
 class UserEdit(UserData):
     full_name: str
     limit_expires: Optional[int] = 30
     updated_at: Optional[datetime] = None
+    disabled: bool
 
 
 class UserSchemas(UserSave):

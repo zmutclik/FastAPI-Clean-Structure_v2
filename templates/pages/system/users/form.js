@@ -2,6 +2,7 @@ var form_ = $("#form_").validate({
     rules: {
         full_name: { required: true },
         username: { required: true },
+        disabled: { required: true },
         email: {
             required: true,
             email: true,
@@ -37,6 +38,7 @@ $(document).ready(function () {
                 "username": $("#form_ input[name='username']").val(),
                 "email": $("#form_ input[name='email']").val(),
                 "limit_expires": $("#form_ input[name='limit_expires']").val(),
+                "disabled": $("#form_ select[name='disabled']").val(),
                 "userScopes": $('input[name="userScopes"]:checked').map(function () {
                     return $(this).val();
                 }).get(),
