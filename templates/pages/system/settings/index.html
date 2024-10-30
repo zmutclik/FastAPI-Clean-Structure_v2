@@ -51,6 +51,9 @@
                         <li class="nav-item">
                             <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-changelog" type="button" role="tab" aria-controls="nav-changelog" aria-selected="false">ChangLog</button>
                         </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="nav-cors-tab" data-bs-toggle="tab" data-bs-target="#nav-cors" type="button" role="tab" aria-controls="nav-cors" aria-selected="false">Cross-Origin Resource Sharing</button>
+                        </li>
                     </ul>
                 </div>
                 <div class="card-body">
@@ -90,7 +93,7 @@
                                     <input type="text" class="form-control" name="SECRET_TEXT" value="{{app.SECRET_TEXT}}">
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
-                                    <button type="button" class="submit btn btn-primary">SIMPAN</button>
+                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
                                 </div>
                             </form>
                             <!-- /#nav-setting -->
@@ -105,7 +108,7 @@
                                             <input type="text" class="form-control col-2" name="version_name" value="{{app.version_name}}" placeholder="Nama">
                                             <input type="text" class="form-control" name="description" value="{{app.description}}" placeholder="Deskripsi">
 
-                                            <button type="button" class="submit btn btn-primary">TAMBAHKAN</button>
+                                            <button type="submit" class="btn btn-primary">TAMBAHKAN</button>
                                         </div>
                                     </div>
                                 </form>
@@ -114,6 +117,24 @@
                             </table>
 
                             <!-- /#nav-changeLog -->
+                        </div>
+                        <div class="tab-pane fade" id="nav-cors" role="tabpanel" aria-labelledby="nav-cors-tab" tabindex="0">
+                            <div class="row">
+                                <form id="form_cors">
+                                    <div class="mb-3">
+                                        <label for="cors_link" class="form-label">Link CORS</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control col-12" id="cors_link" name="link" value="{{app.cors}}" placeholder="https://localhost">
+
+                                            <button type="submit" class="btn btn-primary">TAMBAHKAN</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <table id="table_cors" class="table table-bordered table-striped">
+                            </table>
+
+                            <!-- /#nav-cross-origin -->
                         </div>
                     </div>
                 </div>
@@ -152,7 +173,9 @@
     });
 </script>
 <script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/index_cors.js"></script>
 <script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
 <script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form_changelog.js"></script>
+<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form_cors.js"></script>
 
 {% endblock javascripts %}

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from . import BaseSysT as Base
-from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable
+from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable, CrossOriginTable
 
 
 DB_FILE = "./files/database/db/_system.db"
@@ -95,4 +95,8 @@ if os.path.exists(DB_FILE):
                         }
                     )
                 )
+                db.add(CrossOriginTable(**{"link": "http://localhost"}))
+                db.add(CrossOriginTable(**{"link": "http://127.0.0.1"}))
+                db.add(CrossOriginTable(**{"link": "http://0.0.0.0"}))
+                db.add(CrossOriginTable(**{"link": "http://127.0.0.1:8001"}))
                 db.commit()

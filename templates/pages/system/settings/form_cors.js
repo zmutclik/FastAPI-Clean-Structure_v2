@@ -1,8 +1,8 @@
-var form_changelog = $("#form_changelog").validate({
+var form_cors = $("#form_cors").validate({
     rules: {
-        version: { required: true },
-        version_name: { required: true },
-        description: { required: true },
+        link: {
+            required: true
+        }
     },
     errorElement: 'div',
     errorPlacement: function (error, element) {
@@ -17,16 +17,13 @@ var form_changelog = $("#form_changelog").validate({
     },
 });
 $(document).ready(function () {
-    $("#form_changelog").on("submit", function () {
-
-        if (form_changelog.valid()) {
+    $("#form_cors").on("submit", function () {
+        if (form_cors.valid()) {
             $("form input, form button").blur();
-            $("#form_changelog").LoadingOverlay("show");
+            $("#form_cors").LoadingOverlay("show");
 
-            api.post('/changelog', {
-                "version": $("#form_changelog input[name='version']").val(),
-                "version_name": $("#form_changelog input[name='version_name']").val(),
-                "description": $("#form_changelog input[name='description']").val(),
+            api.post('/cors', {
+                "link": $("#form_cors input[name='link']").val(),
             })
                 .then(function (response) {
                     Swal.fire("Tersimpan!", "", "success")
@@ -51,7 +48,7 @@ $(document).ready(function () {
                         $.each(error.response.data.detail, function (i, v) {
                             de[v.loc[1]] = v["msg"];
                         });
-                        form_changelog.showErrors(de);
+                        form_cors.showErrors(de);
                     } else if (error.status == 500) {
                         Swal.fire({
                             position: "top-end",
@@ -63,8 +60,8 @@ $(document).ready(function () {
                     }
                 })
                 .finally(() => {
-                    oTable.ajax.reload();
-                    $("#form_changelog").LoadingOverlay("hide");
+                    oTableCors.ajax.reload();
+                    $("#form_cors").LoadingOverlay("hide");
                 });
         }
         return false;

@@ -6,6 +6,7 @@ from .userscope import UserScopeTable
 from .system import SystemTable
 from .changelog import ChangeLogTable
 from .repository import RepositoryTable
+from .cross_origin import CrossOriginTable
 from .session import SessionTable,SessionEndTable
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "SystemTable",
     "ChangeLogTable",
     "RepositoryTable",
+    "CrossOriginTable",
 ]

@@ -29,10 +29,12 @@ class PathJS(str, Enum):
     indexJs = "index.js"
     formJs = "form.js"
     changeLogJs = "form_changelog.js"
+    form_cors = "form_cors.js"
+    index_cors = "index_cors.js"
 
 
 ###PAGES###############################################################################################################
-from app.repositories.__system__ import SystemRepository, ChangeLogRepository
+from app.repositories.__system__ import SystemRepository, ChangeLogRepository, CrossOriginRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -48,7 +50,7 @@ def page_js(req: req_nonAuth, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models.__system__ import ChangeLogTable
+from app.models.__system__ import ChangeLogTable, CrossOriginTable
 from sqlalchemy import select
 from datatables import DataTable
 
@@ -67,8 +69,22 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
     return datatable.output_result()
 
 
+@router.post("/{cId}/{sId}/cors/datatables", status_code=202, include_in_schema=False)
+def get_datatables_cros(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
+    query = select(CrossOriginTable, CrossOriginTable.id.label("DT_RowId")).order_by(CrossOriginTable.id.desc())
+
+    datatable: DataTable = DataTable(
+        request_params=params,
+        table=query,
+        column_names=["DT_RowId", "id", "link"],
+        engine=engine_db,
+        # callbacks=callbacks,
+    )
+    return datatable.output_result()
+
+
 ###CRUD################################################################################################################
-from app.schemas.__system__.settings import SettingsSchemas
+from app.schemas.__system__.settings import SettingsSchemas, CROSSchemas
 from app.schemas.__system__.changelog import changeLogsSchemas, changeLogsSave
 
 
@@ -82,6 +98,7 @@ async def update(dataIn: SettingsSchemas, req: req_depends, c_user: c_user_scope
     return repo.update(dataIn.model_dump())
 
 
+###CHANGE-LOG################################################################################################################
 @router.post("/{cId}/{sId}/changelog", response_model=changeLogsSchemas, status_code=202, include_in_schema=False)
 async def changelog_create(dataIn: changeLogsSchemas, req: req_depends, c_user: c_user_scope, db=db):
     repo = ChangeLogRepository(db)
@@ -99,3 +116,20 @@ async def delete(id: int, req: req_depends, c_user: c_user_scope, db=db):
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
     repo.delete(c_user.username, id)
+
+
+###CROS################################################################################################################
+@router.post("/{cId}/{sId}/cors", status_code=202, include_in_schema=False)
+async def cros_create(dataIn: CROSSchemas, req: req_depends, c_user: c_user_scope, db=db):
+    repo = CrossOriginRepository(db)
+    return repo.create(dataIn.model_dump())
+
+
+@router.delete("/{cId}/{sId}/cors/{id:int}", status_code=202, include_in_schema=False)
+async def cros_delete(id: int, req: req_depends, c_user: c_user_scope, db=db):
+    repo = CrossOriginRepository(db)
+    data = repo.get(id)
+    if data is None:
+        raise HTTPException(status_code=400, detail="Data Tida ada.")
+
+    repo.delete(id)

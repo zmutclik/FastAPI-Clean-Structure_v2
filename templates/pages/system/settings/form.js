@@ -22,7 +22,7 @@ var form_setting = $("#form_setting").validate({
     },
 });
 $(document).ready(function () {
-    $("#form_setting .submit").on("click", function () {
+    $("#form_setting").on("submit", function () {
 
         if (form_setting.valid()) {
             $("form input, form button").blur();
@@ -40,12 +40,12 @@ $(document).ready(function () {
             })
                 .then(function (response) {
                     Swal.fire("Tersimpan!", "", "success")
-                    .then((result) => {
-                          Swal.fire({
-                            text: "Mohon Restart System untuk mendapatkan Pengaruh Perubahan.",
-                            icon: "error"
-                          });
-                      });
+                        .then((result) => {
+                            Swal.fire({
+                                text: "Mohon Restart System untuk mendapatkan Pengaruh Perubahan.",
+                                icon: "error"
+                            });
+                        });
                 })
                 .catch(function (error) {
                     if (error.status == 401 || error.status == 400) {
@@ -56,13 +56,20 @@ $(document).ready(function () {
                             showConfirmButton: false,
                             timer: 2000
                         });
-                    }
-                    if (error.status == 422) {
+                    } else if (error.status == 422) {
                         de = {}
                         $.each(error.response.data.detail, function (i, v) {
                             de[v.loc[1]] = v["msg"];
                         });
                         form_setting.showErrors(de);
+                    } else if (error.status == 500) {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            title: "Error pada system, Mohon hubungi Support System anda...",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
                     }
                 })
                 .finally(() => {

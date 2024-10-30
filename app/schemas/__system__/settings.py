@@ -14,3 +14,7 @@ class SettingsSchemas(BaseModel):
     TOKEN_EXPIRED: int
     SECRET_TEXT: str
     ALGORITHM: str
+
+
+class CROSSchemas(BaseModel):
+    link: str

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from .db.system import engine_db
-from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable
+from app.models.__system__ import SystemTable, ChangeLogTable, RepositoryTable, CrossOriginTable
 
 
 class Config(BaseModel):
@@ -23,6 +23,7 @@ class Config(BaseModel):
 
     DATABASE: Union[str, None] = None
     RABBITMQ: Union[str, None] = None
+    CORS: Union[list, None] = None
 
 
 def repository(db, alokasi):
@@ -44,6 +45,14 @@ def changelogs(db):
     return d[0]
 
 
+def crossOrigin(db):
+    data = db.query(CrossOriginTable).all()
+    res = []
+    for item in data:
+        res.append(item)
+    return res
+
+
 with engine_db.begin() as connection:
     with Session(bind=connection) as db:
         sys = db.query(SystemTable).first()
@@ -59,4 +68,5 @@ with engine_db.begin() as connection:
             ALGORITHM=sys.ALGORITHM,
             DATABASE=repository(db, "MariaDB"),
             RABBITMQ=repository(db, "RabbitMQ"),
+            CORS=crossOrigin(db),
         )

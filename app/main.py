@@ -2,9 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
-from app.helpers import getJSON
 from app.core import config
-
 from app.routers import root as root
 
 
@@ -25,10 +23,9 @@ app = create_app()
 
 app.router.redirect_slashes = False
 
-origins = getJSON("database/json/", "cross_middleware_origin")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=config.CORS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -67,6 +64,7 @@ async def add_process_time_header(request: Request, call_next):
     background_tasks.add_task(logs.saveLogs, request)
     response.background = background_tasks
     return response
+
 
 ####################################################################################################################
 from fastapi.responses import RedirectResponse
