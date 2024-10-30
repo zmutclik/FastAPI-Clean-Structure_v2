@@ -38,7 +38,7 @@ def dashboard(req: req_page, db=db):
 
 @router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
 def page_js(req: req_nonAuth, pathFile: PathJS, id: int = None):
-    request.state.islogsave = False
+    req.state.islogsave = False
     if id is not None:
         pageResponse.addData("id", id)
     return pageResponse.response(pathFile)
