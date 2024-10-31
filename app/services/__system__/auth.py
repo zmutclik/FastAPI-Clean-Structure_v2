@@ -5,7 +5,7 @@ from fastapi.security import SecurityScopes
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from .auth_scope import oauth2_scheme
-from .token import token_decode, token_create, user_cookie_token
+from .token import token_decode, token_create, user_cookie_token, user_access_token
 from app.core.db.auth import get_db, engine_db
 from app.repositories.__system__.auth import UsersRepository, SessionRepository
 from app.schemas.__system__.auth import UserResponse
@@ -55,7 +55,6 @@ async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str
         authenticate_value = "Bearer"
 
     token_data = token_decode(token, credentials_exception("Could not validate credentials", authenticate_value))
-
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:
             user = UsersRepository(db).get(token_data.username)
@@ -79,12 +78,11 @@ async def get_pages_user(request: Request):
     token = request.cookies.get(config.TOKEN_KEY)
     clientId = request.state.clientId
     sessionId = request.state.sessionId
-
     if token is None:
         raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
     token_data = token_decode(token, RequiresLoginException(f"/auth/login?next=" + request.url.path))
-
-    sess = SessionRepository().get(sessionId)
+    sessRepo = SessionRepository()
+    sess = sessRepo.get(sessionId)
     if sess is None:
         raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
 

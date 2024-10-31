@@ -4,6 +4,7 @@ from .__system__.auth.profilePage import router as profilePage
 from .__system__.auth.registerPage import router as registerPage
 from .__system__.userPage import router as userPage
 from .__system__.scopePage import router as scopePage
+from .__system__.groupPage import router as groupPage
 from .__system__.repositoryPage import router as repositoryPage
 from .__system__.settingsPage import router as settingsPage
 from .__system__.logsPage import router as logsPage
@@ -30,6 +31,7 @@ app.include_router(dashboardPage)
 app.include_router(profilePage)
 app.include_router(userPage)
 app.include_router(scopePage)
+app.include_router(groupPage)
 app.include_router(repositoryPage)
 app.include_router(settingsPage)
 app.include_router(logsPage)

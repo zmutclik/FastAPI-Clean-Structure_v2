@@ -7,8 +7,7 @@ from pydantic import ValidationError, BaseModel
 from jose import JWTError, jwt
 
 from app.core.db.auth import engine_db
-from .auth_scope import verify_scope
-from app.repositories.__system__.auth import ScopesRepository, SessionRepository
+from app.repositories.__system__.auth import SessionRepository, ScopesRepository
 from app.core import config
 
 ALGORITHM = config.ALGORITHM
@@ -53,22 +52,26 @@ def token_create(data: dict, expires_delta: Union[timedelta, None] = None):
     return encoded_jwt
 
 
-def user_access_token(userID, userName, userScope, timeout: int):
-    user_scope = verify_scope(userID, userScope)
+def user_access_token(db, userName, scopeAuth, scopeUser, timeout: int):
+    scopesPass = ["default"]
+    for item in scopeAuth:
+        if item not in scopeUser:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user scope : " + item)
+        else:
+            scopesPass.append(item)
     access_token = token_create(
-        data={"sub": userName, "scopes": user_scope},
+        data={"sub": userName, "scopes": scopesPass},
         expires_delta=timedelta(minutes=timeout),
     )
     return access_token
 
 
-def user_cookie_token(request: Request, response: Response, userID, userName, timeout: int, sessionID: int):
-    with engine_db.begin() as connection:
-        with Session(bind=connection) as db:
-            userScope = []
-            for item in ScopesRepository(db).getScopesUser(userID):
-                userScope.append(item.scope)
-            access_token = user_access_token(userID, userName, userScope, timeout)
-            response.set_cookie(key=TOKEN_KEY, value=access_token)
-
-            SessionRepository().update(sessionID, {"username": userName, "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED)})
+def user_cookie_token(response: Response, userName, userScopes: list[str], sessionID: int):
+    userScopes.append("default")
+    userScopes.append("pages")
+    access_token = token_create(
+        data={"sub": userName, "scopes": userScopes},
+        expires_delta=timedelta(minutes=config.TOKEN_EXPIRED),
+    )
+    response.set_cookie(key=TOKEN_KEY, value=access_token)
+    SessionRepository().update(sessionID, {"username": userName, "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED)})

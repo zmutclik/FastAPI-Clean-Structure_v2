@@ -94,6 +94,25 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="limit_expires" class="form-label">Daftar Grup</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                {% for group in usergroups %}
+                                                <div class="col-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="{{ group.id }}" name="userGroups" id="userGroups_{{group.group}}" {% if group.checked %} checked {% endif %}>
+                                                        <label class="form-check-label" for="userGroups_{{group.group}}">
+                                                            {{ group.group }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="mb-3 mt-5 float-end">
                                     <button type="submit" class="btn btn-primary">SIMPAN</button>
                                 </div>

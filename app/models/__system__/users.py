@@ -26,3 +26,18 @@ class UsersTable(Base):
     deleted_user = Column(String(50))
 
     SCOPES = relationship("UserScopeTable", back_populates="USER")
+    GROUPS = relationship("UserGroupTable", back_populates="USER")
+
+    @hybrid_property
+    def list_scope(self) -> list[int]:
+        res = []
+        for item in self.SCOPES:
+            res.append(item.scope)
+        return res
+
+    @hybrid_property
+    def list_group(self) -> list[int]:
+        res = []
+        for item in self.GROUPS:
+            res.append(item.group)
+        return res

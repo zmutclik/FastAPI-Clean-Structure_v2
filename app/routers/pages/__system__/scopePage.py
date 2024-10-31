@@ -22,7 +22,7 @@ db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
 req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
-c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=["admin"])]
+c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=["admin", "pages"])]
 
 
 class PathJS(str, Enum):

@@ -1,14 +1,4 @@
 var form_ = $("#form_").validate({
-    rules: {
-        full_name: { required: true },
-        username: { required: true },
-        disabled: { required: true },
-        email: {
-            required: true,
-            email: true,
-        },
-        limit_expires: { number: true },
-    },
     errorElement: 'div',
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -22,10 +12,10 @@ var form_ = $("#form_").validate({
     },
 });
 $(document).ready(function () {
-    $("#form_ input[name='full_name']").focus();
+    $("#form_ input[name='group']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/users/';
+        window.location.href = '/page/groups/';
     });
 
     $("#form_").on("submit", function () {
@@ -34,25 +24,14 @@ $(document).ready(function () {
             $("#form_").LoadingOverlay("show");
 
             api.post('', {
-                "full_name": $("#form_ input[name='full_name']").val(),
-                "username": $("#form_ input[name='username']").val(),
-                "email": $("#form_ input[name='email']").val(),
-                "limit_expires": $("#form_ input[name='limit_expires']").val(),
-                "disabled": $("#form_ select[name='disabled']").val(),
-                "userScopes": $('input[name="userScopes"]:checked').map(function () {
-                    return $(this).val();
-                }).get(),
-                "userGroups": $('input[name="userGroups"]:checked').map(function () {
-                    return $(this).val();
-                }).get(),
+                "group": $("#form_ input[name='group']").val(),
+                "desc": $("#form_ input[name='desc']").val(),
             })
                 .then(function (response) {
                     idU = response.data.id;
-                    console.log(response);
-                    
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '/page/groups/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {

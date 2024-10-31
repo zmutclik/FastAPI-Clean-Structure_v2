@@ -22,7 +22,7 @@ db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
 req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
-c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=["admin"])]
+c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=["admin", "pages"])]
 
 
 class PathJS(str, Enum):
@@ -32,11 +32,7 @@ class PathJS(str, Enum):
 
 ###PAGES###############################################################################################################
 from fastapi.responses import HTMLResponse
-from app.repositories.__system__.auth import (
-    UsersRepository,
-    UserScopesRepository,
-    ScopesRepository,
-)
+from app.repositories.__system__.auth import UsersRepository, ScopesRepository, GroupsRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -45,15 +41,19 @@ def page_system_users(req: req_page):
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
-def page_system_users_form(req: req_depends, db=db):
-    pageResponse.addData("userscopes", ScopesRepository(db).all())
+def page_system_users_form_add(req: req_depends, db=db):
+    pageResponse.addData("userscopes", ScopesRepository(db).list_user_checked([]))
+    pageResponse.addData("usergroups", GroupsRepository(db).list_user_checked([]))
     return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
 def page_system_users_form(id: int, req: req_depends, db=db):
-    pageResponse.addData("userscopes", UserScopesRepository(db).getAllByUser(id))
-    pageResponse.addData("user", UsersRepository(db).getById(id))
+    repo = UsersRepository(db)
+    user = repo.getById(id)
+    pageResponse.addData("userscopes", ScopesRepository(db).list_user_checked(user.list_scope))
+    pageResponse.addData("usergroups", GroupsRepository(db).list_user_checked(user.list_group))
+    pageResponse.addData("user", user)
     return pageResponse.response("form.html")
 
 
@@ -89,48 +89,49 @@ from app.schemas.__system__.auth import UserResponse, UserSave, UserEdit, UserDa
 
 @router.post("/{cId}/{sId}", response_model=UserResponse, status_code=201, include_in_schema=False)
 async def create_user(dataIn: UserDataIn, req: req_depends, c_user: c_user_scope, db=db):
-    userrepo = UsersRepository(db)
-    if userrepo.get(dataIn.username):
+    repo = UsersRepository(db)
+    if repo.get(dataIn.username):
         raise HTTPException(status_code=400, detail="USERNAME sudah ada yang menggunakan.")
-    if userrepo.getByEmail(dataIn.email):
+    if repo.getByEmail(dataIn.email):
         raise HTTPException(status_code=400, detail="EMAIL sudah ada yang menggunakan.")
 
     data = UserSave.model_validate(dataIn.model_dump())
     data.created_user = c_user.username
-    cdata = userrepo.create(data.model_dump())
-    usrepo = UserScopesRepository(db)
-    for i in dataIn.userScopes:
-        usrepo.create({"id_user": cdata.id, "id_scope": i})
-    return userrepo.get(cdata.username)
+    cdata = repo.create(data.model_dump())
+    repo.add_scopes(cdata.id, dataIn.userScopes)
+    repo.add_groups(cdata.id, dataIn.userGroups)
+
+    return repo.get(cdata.username)
 
 
 @router.post("/{cId}/{sId}/{id:int}", response_model=UserResponse, status_code=202, include_in_schema=False)
 async def update_user(dataIn: UserDataIn, id: int, req: req_depends, c_user: c_user_scope, db=db):
-    userrepo = UsersRepository(db)
-    dataUser = userrepo.getById(id)
+    repo = UsersRepository(db)
+    dataUser = repo.getById(id)
     if dataUser is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
     data = UserEdit.model_validate(dataIn.model_dump())
     data.updated_at = datetime.datetime.now()
-    userrepo.update(id, data.model_dump())
+    repo.update(id, data.model_dump())
 
-    usrepo = UserScopesRepository(db)
-    usrepo.deleteByUser(dataUser.id)
-    for i in dataIn.userScopes:
-        usrepo.create({"id_user": dataUser.id, "id_scope": i})
+    repo.empty_scope(dataUser.id)
+    repo.add_scopes(dataUser.id, dataIn.userScopes)
 
-    return userrepo.get(dataUser.username)
+    repo.empty_group(dataUser.id)
+    repo.add_groups(dataUser.id, dataIn.userGroups)
+
+    return repo.get(dataUser.username)
 
 
 @router.delete("/{cId}/{sId}/{id:int}", status_code=202, include_in_schema=False)
 async def delete_user(id: int, req: req_depends, c_user: c_user_scope, db=db):
-    userrepo = UsersRepository(db)
-    dataUser = userrepo.getById(id)
+    repo = UsersRepository(db)
+    dataUser = repo.getById(id)
     if dataUser is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
-    userrepo.update(
+    repo.update(
         id,
         {"deleted_at": datetime.datetime.now(), "deleted_user": c_user.username},
     )

@@ -1,4 +1,5 @@
-from .scope import ScopesSave, Scopes, UserScopesSave
+from .scope import ScopesSave, Scopes
+from .group import GroupSave, Groups
 from .token import Token, TokenData
 from .users import UserSave, UserEdit, UserSchemas, UserResponse, UserDataIn, UserData, userloggedin, GantiPassword, UserRegister
 from .login import loginSchemas, registerSchemas
@@ -6,7 +7,8 @@ from .login import loginSchemas, registerSchemas
 __all__ = [
     "ScopesSave",
     "Scopes",
-    "UserScopesSave",
+    "GroupSave",
+    "Groups",
     "Token",
     "TokenData",
     "UserSave",

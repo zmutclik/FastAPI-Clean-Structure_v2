@@ -44,6 +44,7 @@ class PageResponseSchemas:
 
     def pageDependsNonUser(self, req: Request, cId: str, sId: str):
         self.req = req
+        self.user: UserSchemas = None
         self.initContext()
         if req.state.clientId != cId or req.state.sessionId != sId:
             raise HTTPException(status_code=404)
@@ -53,6 +54,7 @@ class PageResponseSchemas:
         self.context[key] = value
 
     def initContext(self):
+        self.context = {}
         self.addData("app_name", config.APP_NAME)
         self.addData("app_version", config.APP_VERSION)
         self.addData("clientId", self.req.state.clientId)

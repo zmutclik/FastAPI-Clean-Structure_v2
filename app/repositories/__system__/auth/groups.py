@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from app.core.db.auth import ScopeTable as MainTable
+from app.core.db.auth import GroupsTable as MainTable
 
 
-class ScopesRepository:
+class GroupsRepository:
     def __init__(self, db_session: Session) -> None:
         self.session: Session = db_session
 
-    def get(self, scope: str):
-        return self.session.query(MainTable).filter(MainTable.scope == scope).first()
+    def get(self, group: str):
+        return self.session.query(MainTable).filter(MainTable.group == group).first()
 
     def getById(self, id: int):
         return self.session.query(MainTable).filter(MainTable.id == id).first()
@@ -18,17 +18,11 @@ class ScopesRepository:
     def list_user_checked(self, userGroups: list):
         result = []
         for it in self.all():
-            d = {"id": it.id, "scope": it.scope, "checked": False}
-            if it.scope in userGroups:
+            d = {"id": it.id, "group": it.group, "checked": False}
+            if it.group in userGroups:
                 d["checked"] = True
             result.append(d)
         return result
-
-    def list(self):
-        res = []
-        for item in self.all():
-            res.append(item.scope)
-        return res
 
     def create(self, dataIn):
         data = MainTable(**dataIn)

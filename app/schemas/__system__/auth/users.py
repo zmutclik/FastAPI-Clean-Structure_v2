@@ -20,6 +20,7 @@ class userloggedin(UserData):
 class UserDataIn(UserData):
     disabled: bool
     userScopes: List[int]
+    userGroups: List[int]
 
 
 class UserSave(UserData):

@@ -12,7 +12,7 @@ from app.core.db.auth import get_db
 from app.helpers.Exceptions import RequiresLoginException
 from app.services.__system__ import LogServices
 
-from app.repositories.__system__.auth import UsersRepository, SessionRepository, SessionEndRepository
+from app.repositories.__system__.auth import UsersRepository, SessionRepository
 from app.services.__system__.auth import get_password_hash
 from app.schemas.__system__.auth import registerSchemas, UserRegister
 from app.core import config
@@ -103,9 +103,6 @@ def post_register(
 
     thread = threading.Thread(target=telegram_bot_sendtext, args=(usersaved.username, usersaved.email, usersaved.id))
     thread.start()
-
-
-import base64
 
 
 def telegram_bot_sendtext(username, email, id):

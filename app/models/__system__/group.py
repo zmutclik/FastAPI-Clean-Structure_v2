@@ -8,30 +8,30 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.core.db import BaseAuth as Base
 
 
-class ScopeTable(Base):
-    __tablename__ = "scopes"
+class GroupsTable(Base):
+    __tablename__ = "groups"
 
     id = Column(Integer, primary_key=True, index=True)
-    scope = Column(String(32), unique=True, index=True)
-    desc = Column(String(250))
+    group = Column(String(64), unique=True, index=True)
+    desc = Column(String(256))
 
-    USERCOPES = relationship("UserScopeTable", back_populates="SCOPES")
+    USERGROUPS = relationship("UserGroupTable", back_populates="GROUPS")
 
 
-class UserScopeTable(Base):
-    __tablename__ = "user_scopes"
+class UserGroupTable(Base):
+    __tablename__ = "user_groups"
 
     id = Column(Integer, primary_key=True, index=True)
     id_user = Column(Integer, ForeignKey("user.id"), index=True)
-    id_scope = Column(Integer, ForeignKey("scopes.id"), index=True)
+    id_group = Column(Integer, ForeignKey("groups.id"), index=True)
 
-    USER = relationship("UsersTable", back_populates="SCOPES")
-    SCOPES = relationship("ScopeTable", back_populates="USERCOPES")
+    USER = relationship("UsersTable", back_populates="GROUPS")
+    GROUPS = relationship("GroupsTable", back_populates="USERGROUPS")
 
     @hybrid_property
-    def scope(self) -> str:
-        return self.SCOPES.scope
+    def group(self) -> str:
+        return self.GROUPS.group
 
     @hybrid_property
     def desc(self) -> str:
-        return self.SCOPES.desc
+        return self.GROUPS.desc

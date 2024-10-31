@@ -3,12 +3,12 @@ from pydantic import BaseModel, Json, Field, EmailStr
 from datetime import date, time, datetime
 
 
-class Scopes(BaseModel):
+class Groups(BaseModel):
     id: int
-    scope: str
+    group: str
     desc: str
-    
-    
-class ScopesSave(BaseModel):
-    scope: str
+
+
+class GroupSave(BaseModel):
+    group: str
     desc: str

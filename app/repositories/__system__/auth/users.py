@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from fastapi import Form, Depends
 
-from app.core.db.auth import UsersTable as MainTable
+from app.core.db.auth import UsersTable as MainTable, UserScopeTable, UserGroupTable, GroupsTable, ScopeTable
 
 
 class UsersRepository:
@@ -37,3 +37,23 @@ class UsersRepository:
 
     def delete(self, username: str, id_delete: int) -> None:
         self.update(id_delete, {"deleted_at": datetime.now(), "deleted_user": username})
+
+    def empty_scope(self, id_user: int) -> None:
+        self.session.query(UserScopeTable).filter(UserScopeTable.id_user == id_user).delete()
+        self.session.commit()
+
+    def add_scopes(self, id_user: int, scopes: list[int]):
+        for item in scopes:
+            data = UserScopeTable(id_user=id_user, id_scope=item)
+            self.session.add(data)
+        self.session.commit()
+
+    def empty_group(self, id_user: int) -> None:
+        self.session.query(UserGroupTable).filter(UserGroupTable.id_user == id_user).delete()
+        self.session.commit()
+
+    def add_groups(self, id_user: int, scopes: list[int]):
+        for item in scopes:
+            data = UserGroupTable(id_user=id_user, id_group=item)
+            self.session.add(data)
+        self.session.commit()

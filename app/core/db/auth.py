@@ -6,9 +6,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from . import BaseAuth as Base
-from app.models.__system__ import UsersTable
+from app.models.__system__ import UsersTable, UserScopeTable
+from app.models.__system__ import GroupsTable, UserGroupTable
 from app.models.__system__ import ScopeTable
-from app.models.__system__ import UserScopeTable
 
 
 now = datetime.now()
@@ -52,18 +52,10 @@ if os.path.exists(fileDB_ENGINE):
                     }
                 )
                 db.add(data)
-                data = ScopeTable(
-                    **{
-                        "scope": "admin",
-                        "desc": "Privilage Khusus ADMIN",
-                    }
-                )
-                db.add(data)
-                data = UserScopeTable(
-                    **{
-                        "id_user": 1,
-                        "id_scope": 1,
-                    }
-                )
-                db.add(data)
+                db.add(ScopeTable(**{"scope": "admin", "desc": "Privilage Khusus ADMIN"}))
+                db.add(UserScopeTable(**{"id_user": 1, "id_scope": 1}))
+                db.add(GroupsTable(**{"group": "users", "desc": "Privilage Standart Users"}))
+                db.add(GroupsTable(**{"group": "admin", "desc": "Privilage Khusus ADMIN"}))
+                db.add(UserGroupTable(**{"id_user": 1, "id_group": 1}))
+                db.add(UserGroupTable(**{"id_user": 1, "id_group": 2}))
                 db.commit()

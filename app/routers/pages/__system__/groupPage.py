@@ -5,7 +5,7 @@ from fastapi import APIRouter, Security, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
-from app.core.db.system import engine_db, get_db
+from app.core.db.auth import engine_db, get_db
 from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
@@ -13,11 +13,11 @@ from app.services.__system__.auth import get_active_user
 
 
 router = APIRouter(
-    prefix="/repository",
+    prefix="/groups",
     tags=["FORM"],
 )
 
-pageResponse = PageResponseSchemas("templates", "pages/system/repository/")
+pageResponse = PageResponseSchemas("templates", "pages/system/groups/")
 db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
@@ -31,22 +31,22 @@ class PathJS(str, Enum):
 
 
 ###PAGES###############################################################################################################
-from app.repositories.__system__.repository import Repository
+from app.repositories.__system__.auth import GroupsRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository(req: req_page):
+def page_system_groups(req: req_page):
     return pageResponse.response("index.html")
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_add(req: req_depends):
+def page_system_groups_add(req: req_page):
     return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_form(id: int, req: req_depends, db=db):
-    pageResponse.addData("repository", Repository(db).get(id))
+def page_system_groups_form(id: int, req: req_page, db=db):
+    pageResponse.addData("group", GroupsRepository(db).getById(id))
     return pageResponse.response("form.html")
 
 
@@ -57,29 +57,19 @@ def page_js(req: req_nonAuth, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models.__system__ import RepositoryTable
+from app.models.__system__ import GroupsTable
 from sqlalchemy import select
 from datatables import DataTable
 
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(RepositoryTable, RepositoryTable.id.label("DT_RowId")).filter(
-        RepositoryTable.deleted_at == None,
-    )
+    query = select(GroupsTable, GroupsTable.id.label("DT_RowId"))
 
     datatable: DataTable = DataTable(
         request_params=params,
         table=query,
-        column_names=[
-            "DT_RowId",
-            "id",
-            "name",
-            "allocation",
-            "datalink",
-            "user",
-            "active",
-        ],
+        column_names=["DT_RowId", "id", "group", "desc"],
         engine=engine_db,
         # callbacks=callbacks,
     )
@@ -87,27 +77,22 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
 
 
 ###CRUD################################################################################################################
-from app.schemas.__system__.repository import (
-    RepositorysSchemas,
-    RepositorySave,
-    RepositoryData,
-)
+from app.schemas.__system__.auth import Groups, GroupSave
 
 
-@router.post("/{cId}/{sId}", response_model=RepositorysSchemas, status_code=201, include_in_schema=False)
-async def create(dataIn: RepositoryData, req: req_depends, c_user: c_user_scope, db=db):
-    repo = Repository(db)
-    data = RepositorySave.model_validate(dataIn.model_dump())
-    data.created_user = c_user.username
-    cdata = repo.create(data.model_dump())
+@router.post("/{cId}/{sId}", response_model=Groups, status_code=201, include_in_schema=False)
+async def create(dataIn: GroupSave, req: req_depends, c_user: c_user_scope, db=db):
+    repo = GroupsRepository(db)
+    if repo.get(dataIn.group):
+        raise HTTPException(status_code=400, detail="Grup sudah ada yang menggunakan.")
 
-    return cdata
+    return repo.create(dataIn.model_dump())
 
 
-@router.post("/{cId}/{sId}/{id:int}", response_model=RepositorysSchemas, status_code=202, include_in_schema=False)
-async def update(dataIn: RepositoryData, id: int, req: req_depends, c_user: c_user_scope, db=db):
-    repo = Repository(db)
-    data = repo.get(id)
+@router.post("/{cId}/{sId}/{id:int}", response_model=Groups, status_code=202, include_in_schema=False)
+async def update(dataIn: GroupSave, id: int, req: req_depends, c_user: c_user_scope, db=db):
+    repo = GroupsRepository(db)
+    data = repo.getById(id)
     if data is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
@@ -116,9 +101,9 @@ async def update(dataIn: RepositoryData, id: int, req: req_depends, c_user: c_us
 
 @router.delete("/{cId}/{sId}/{id:int}", status_code=202, include_in_schema=False)
 async def delete(id: int, req: req_depends, c_user: c_user_scope, db=db):
-    repo = Repository(db)
-    data = repo.get(id)
+    repo = GroupsRepository(db)
+    data = repo.getById(id)
     if data is None:
         raise HTTPException(status_code=400, detail="Data Tida ada.")
 
-    return repo.delete(c_user.username, id)
+    return repo.delete(id)

@@ -12,7 +12,7 @@ from app.core.db.auth import get_db
 from app.helpers.Exceptions import RequiresLoginException
 from app.services.__system__ import LogServices
 
-from app.repositories.__system__.auth import UsersRepository, SessionRepository, SessionEndRepository
+from app.repositories.__system__.auth import UsersRepository, SessionRepository
 from app.services.__system__.auth import authenticate_user, user_cookie_token
 from app.schemas.__system__.auth import loginSchemas
 from app.core import config
@@ -92,7 +92,7 @@ def post_login(
     if not userreal:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User atau Password anda Salah.!")
 
-    user_cookie_token(request, response, user.id, user.username, config.TOKEN_EXPIRED, sess.id)
+    user_cookie_token(response, user.username, user.list_scope, sess.id)
 
 
 from app.core import config
