@@ -156,13 +156,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 <!-- ------------------- -->
-<script>
-    const api = axios.create({
-        baseURL: '/page/logs/{{clientId}}/{{sessionId}}',
-        timeout: 2000,
-        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
-    });
-</script>
+<script>const api=axios.create({ baseURL: '/page/logs/{{clientId}}/{{sessionId}}', timeout: 2000, headers:{ 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}')}});</script>
 <script src="/page/logs/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
 
 {% endblock javascripts %}

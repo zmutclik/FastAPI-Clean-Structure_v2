@@ -171,13 +171,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 <!-- ------------------- -->
-<script>
-    const api = axios.create({
-        baseURL: '/page/profile/{{clientId}}/{{sessionId}}',
-        timeout: 2000,
-        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
-    });
-</script>
+<script>const api = axios.create({ baseURL: '/page/profile/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
 <script src="/page/profile/{{clientId}}/{{sessionId}}/{{app_version}}/ganti_password.js?id={{data.id}}"></script>
 <script src="/page/profile/{{clientId}}/{{sessionId}}/{{app_version}}/setting.js?id={{data.id}}"></script>
 {% endblock javascripts %}

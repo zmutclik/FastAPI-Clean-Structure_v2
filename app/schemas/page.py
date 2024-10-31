@@ -60,6 +60,7 @@ class PageResponseSchemas:
         self.addData("TOKEN_KEY", config.TOKEN_KEY)
         self.addData("segment", self.req.scope["route"].name)
         self.addData("userloggedin", self.user)
+        self.addData("TOKEN_EXPIRED", (config.TOKEN_EXPIRED * 60 * 1000) - 2000)
 
     def response(
         self,

@@ -3,12 +3,14 @@ from enum import Enum
 from datetime import datetime
 from time import sleep
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, Security
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.core.db.auth import engine_db, get_db
 from app.schemas import PageResponseSchemas
+from app.schemas.__system__.auth import UserSchemas
+from app.services.__system__.auth import get_active_user
 
 router = APIRouter(
     prefix="/profile",
@@ -19,6 +21,7 @@ db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
 req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
+c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=[])]
 
 
 class PathJS(str, Enum):
@@ -48,8 +51,9 @@ def page_js(req: req_nonAuth, pathFile: PathJS, id: int = None):
 from app.schemas.__system__.auth.users import GantiPassword, ProfileSetting, UserResponse
 from app.services.__system__.auth import verify_password, get_password_hash
 
+
 @router.post("/{cId}/{sId}/gantipassword/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
-def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):
+def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, c_user: c_user_scope, db=db):
     repo = UsersRepository(db)
     data = repo.getById(id)
     if data is None:
@@ -63,7 +67,7 @@ def ganti_password(id: int, dataIn: GantiPassword, req: req_depends, db=db):
 
 
 @router.post("/{cId}/{sId}/setting/{id:int}", response_model=UserResponse, status_code=201, include_in_schema=False)
-def setting(id: int, dataIn: ProfileSetting, req: req_depends, db=db):
+def setting(id: int, dataIn: ProfileSetting, req: req_depends, c_user: c_user_scope, db=db):
     repo = UsersRepository(db)
     data = repo.getById(id)
     if data is None:

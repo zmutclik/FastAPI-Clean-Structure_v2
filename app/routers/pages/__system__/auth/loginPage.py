@@ -84,7 +84,7 @@ def post_login(
     user = userrepo.getByEmail(dataIn.email)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User atau Password anda Salah.!")
-    
+
     if user.disabled:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Mohon maaf USER tidak aktif.")
 
@@ -101,13 +101,30 @@ from app.core import config
 @router.get("/logout/{username}", status_code=201, include_in_schema=False)
 def ganti_password(
     res: Response,
-    request: Request,
+    req: Request,
     db: Session = Depends(get_db),
 ):
     res.delete_cookie(key=config.SESSION_KEY)
     res.delete_cookie(key=config.TOKEN_KEY)
 
-    SessionRepository().disable(request.state.sessionId)
+    SessionRepository().disable(req.state.sessionId)
+    thread = threading.Thread(target=SessionRepository().migrasi())
+    thread.start()
+
+    sleep(1)
+    raise RequiresLoginException(f"/auth/login")
+
+
+@router.get("/timeout/{username}", status_code=201, include_in_schema=False)
+def ganti_password(
+    res: Response,
+    req: Request,
+    db: Session = Depends(get_db),
+):
+    res.delete_cookie(key=config.SESSION_KEY)
+    res.delete_cookie(key=config.TOKEN_KEY)
+
+    SessionRepository().disable(req.state.sessionId)
     thread = threading.Thread(target=SessionRepository().migrasi())
     thread.start()
 
