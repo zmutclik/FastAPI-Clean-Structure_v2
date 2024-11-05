@@ -11,7 +11,7 @@ from app.core.db import BaseSysT as Base
 class SystemTable(Base):
     __tablename__ = "system"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
     APP_NAME = Column(String(32), unique=True, index=True)
     APP_DESCRIPTION = Column(String(256))

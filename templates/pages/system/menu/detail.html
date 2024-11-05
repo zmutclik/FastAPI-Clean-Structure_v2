@@ -1,0 +1,166 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Form Menu {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- DataTables -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.css" rel="stylesheet">
+
+<!-- Theme style -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css"><!-- Styles -->
+<link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/assets/css/menu-editor.css">
+
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">MENU</h1>
+                    <h3 class="card-title mt-2">MENU Manajemen</h3>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div id="MenuEditor_">
+
+
+
+                                    </div>
+
+                                    <div class="mb-3 mt-1 float-end">
+                                        <button type="button" id="btnSabeSort" class="btn btn-secondary mt-3">Simpan Perubahan Urutan</button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            EDITOR
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="form_">
+                                                <input type="hidden" id="menuid" name="id">
+                                                <div class="mb-3 row">
+                                                    <label for="menutext" class="col-sm-2 col-form-label">Text</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="menutext" name="text" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="menutooltop" class="col-sm-2 col-form-label">Tooltip</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="menutooltop" name="tooltip">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="menuhref" class="col-sm-2 col-form-label">Href</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="menuhref" name="href" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="menuicon" class="col-sm-2 col-form-label">Icon</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="menuicon" name="icon" required>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 row">
+                                                    <label for="menudisabled" class="col-sm-2 form-label">Disabled</label>
+                                                    <div class="col-sm-10">
+                                                        <select class="form-select" aria-label="Default select" id="menudisabled" name="disabled">
+                                                            <option value="1">Tidak Aktif</option>
+                                                            <option value="0">Aktif</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 mt-1 float-end panelSubmit">
+                                                    <button type="button" class="btn btn-secondary btnCancel">BATAL</button>
+                                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                                </div>
+                                            </form>
+                                            <div class="mb-3 mt-1 float-end panelAdd">
+                                                <button type="button" id="btnAdd" class="btn btn-success">TAMBAH MENU BARU</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="/static/assets/js/menu-editor.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.7/r-3.0.3/datatables.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_id.min.js" integrity="sha512-Orvt00GKq6XzBWqbltE094YknH2BN78wpQqLT/P3Jx3nhaBmEbd7JzVDJ2qLTu8J8SuMoACKoIxk851FS5ZIUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+<!-- ------------------- -->
+<script>
+    const api = axios.create({
+        baseURL: '/page/menu/detail/{{clientId}}/{{sessionId}}/{{menutype.id}}',
+        timeout: 2000,
+        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
+    });
+</script>
+<script src="/page/menu/{{clientId}}/{{sessionId}}/{{app_version}}/detail.js"></script>
+
+{% endblock javascripts %}

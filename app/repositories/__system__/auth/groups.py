@@ -13,7 +13,7 @@ class GroupsRepository:
         return self.session.query(MainTable).filter(MainTable.id == id).first()
 
     def all(self):
-        return self.session.query(MainTable).all()
+        return self.session.query(MainTable).order_by(MainTable.group).all()
 
     def list_user_checked(self, userGroups: list):
         result = []

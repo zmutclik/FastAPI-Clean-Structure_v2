@@ -11,7 +11,7 @@ from app.core.db import BaseAuth as Base
 class UsersTable(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     username = Column(String(32), unique=True, index=True)
     email = Column(String(50), unique=True, index=True)
     full_name = Column(String(50))

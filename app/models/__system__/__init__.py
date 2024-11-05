@@ -2,6 +2,7 @@ from .logs import TableLogs, TableIpAddress
 from .scope import ScopeTable, UserScopeTable
 from .users import UsersTable
 from .group import GroupsTable, UserGroupTable
+from .menu import MenuTable, MenuTypeTable
 
 from .system import SystemTable
 from .changelog import ChangeLogTable
@@ -25,4 +26,6 @@ __all__ = [
     "ChangeLogTable",
     "RepositoryTable",
     "CrossOriginTable",
+    "MenuTable",
+    "MenuTypeTable",
 ]

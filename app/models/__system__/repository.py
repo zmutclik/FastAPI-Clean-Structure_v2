@@ -11,7 +11,7 @@ from app.core.db import BaseSysT as Base
 class RepositoryTable(Base):
     __tablename__ = "repository"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(32), index=True)
     allocation = Column(String(32), index=True)
     datalink = Column(String(256))

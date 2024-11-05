@@ -11,7 +11,7 @@ from app.core.db import BaseAuth as Base
 class GroupsTable(Base):
     __tablename__ = "groups"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     group = Column(String(64), unique=True, index=True)
     desc = Column(String(256))
 
@@ -21,7 +21,7 @@ class GroupsTable(Base):
 class UserGroupTable(Base):
     __tablename__ = "user_groups"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("user.id"), index=True)
     id_group = Column(Integer, ForeignKey("groups.id"), index=True)
 

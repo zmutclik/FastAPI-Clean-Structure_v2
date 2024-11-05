@@ -10,5 +10,5 @@ from app.core.db import BaseSysT as Base
 
 class CrossOriginTable(Base):
     __tablename__ = "cors"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     link = Column(String(250), index=True)

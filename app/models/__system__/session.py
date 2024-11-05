@@ -10,7 +10,7 @@ from app.core.db import BaseSeSS as Base
 
 class SessionTable(Base):
     __tablename__ = "session"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     client_id = Column(String(32), index=True)
     session_id = Column(String(32), unique=True, index=True)
     username = Column(String(32), index=True)
