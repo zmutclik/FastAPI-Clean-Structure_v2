@@ -36,7 +36,7 @@ from app.repositories.__system__.auth import UsersRepository, ScopesRepository, 
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_users(req: req_page):
+def page_system_akun_users(req: req_page):
     return pageResponse.response("index.html")
 
 

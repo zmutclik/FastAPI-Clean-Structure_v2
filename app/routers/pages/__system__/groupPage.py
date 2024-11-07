@@ -38,7 +38,7 @@ from app.repositories.__system__.auth import GroupsRepository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_groups(req: req_page):
+def page_system_akun_groups(req: req_page):
     return pageResponse.response("index.html")
 
 

@@ -146,12 +146,26 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
+                            "text": "Menu",
+                            "segment": "menu",
+                            "href": "/page/menu/",
+                            "icon_color": "",
+                            "icon": "lni lni-menu",
+                            "sort": 2,
+                            "menutype_id": 1,
+                            "parent_id": 2,
+                        }
+                    )
+                )
+                db.add(
+                    MenuTable(
+                        **{
                             "text": "Scope",
                             "segment": "scope",
                             "href": "/page/scopes/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
-                            "sort": 2,
+                            "sort": 3,
                             "menutype_id": 1,
                             "parent_id": 2,
                         }
@@ -165,7 +179,7 @@ if os.path.exists(DB_FILE):
                             "href": "/page/groups/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
-                            "sort": 3,
+                            "sort": 4,
                             "menutype_id": 1,
                             "parent_id": 2,
                         }
@@ -179,7 +193,7 @@ if os.path.exists(DB_FILE):
                             "href": "/page/repository/",
                             "icon": "lni lni-link",
                             "icon_color": "",
-                            "sort": 4,
+                            "sort": 5,
                             "menutype_id": 1,
                             "parent_id": 2,
                         }
@@ -193,7 +207,7 @@ if os.path.exists(DB_FILE):
                             "href": "/page/systemsettings/",
                             "icon": "lni lni-cog",
                             "icon_color": "",
-                            "sort": 5,
+                            "sort": 6,
                             "menutype_id": 1,
                             "parent_id": 2,
                         }
@@ -207,7 +221,7 @@ if os.path.exists(DB_FILE):
                             "href": "/page/logs/",
                             "icon": "lni lni-travel",
                             "icon_color": "",
-                            "sort": 6,
+                            "sort": 7,
                             "menutype_id": 1,
                             "parent_id": 2,
                         }
