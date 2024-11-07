@@ -76,18 +76,19 @@ async def get_active_user(current_user: Annotated[UserResponse, Security(get_cur
 
 async def get_pages_user(request: Request):
     token = request.cookies.get(config.TOKEN_KEY)
-    clientId = request.state.clientId
-    sessionId = request.state.sessionId
     if token is None:
         raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
     token_data = token_decode(token, RequiresLoginException(f"/auth/login?next=" + request.url.path))
-    sessRepo = SessionRepository()
-    sess = sessRepo.get(sessionId)
-    if sess is None:
-        raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
+    if not config.SESSION_DISABLE:
+        clientId = request.state.clientId
+        sessionId = request.state.sessionId
+        sessRepo = SessionRepository()
+        sess = sessRepo.get(sessionId)
+        if sess is None:
+            raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
 
-    if sess.client_id != clientId or sess.username != token_data.username:
-        raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
+        if sess.client_id != clientId or sess.username != token_data.username:
+            raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
 
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:

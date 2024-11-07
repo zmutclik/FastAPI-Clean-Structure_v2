@@ -57,3 +57,10 @@ class UsersRepository:
             data = UserGroupTable(id_user=id_user, id_group=item)
             self.session.add(data)
         self.session.commit()
+
+    def list_group(self, id_user: int):
+        dt = self.session.query(UserGroupTable).filter(UserGroupTable.id_user == id_user).all()
+        result = []
+        for it in dt:
+            result.append(it.id_group)
+        return result

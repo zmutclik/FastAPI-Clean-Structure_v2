@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from . import BaseAuth as Base
 from app.models.__system__ import UsersTable, UserScopeTable
-from app.models.__system__ import GroupsTable, UserGroupTable
+from app.models.__system__ import GroupsTable, UserGroupTable, GroupMenuTable
 from app.models.__system__ import ScopeTable
 
 

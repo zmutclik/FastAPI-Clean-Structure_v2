@@ -53,17 +53,17 @@ app.include_router(pages.registerPage)
 from fastapi import BackgroundTasks
 from app.services.__system__ import LogServices
 
-
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
-    request = await logs.start(request)
-    response = await call_next(request)
-    background_tasks = BackgroundTasks()
-    logs.finish(request=request, response=response)
-    background_tasks.add_task(logs.saveLogs, request)
-    response.background = background_tasks
-    return response
+if not config.SESSION_DISABLE:
+    @app.middleware("http")
+    async def add_process_time_header(request: Request, call_next):
+        logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
+        request = await logs.start(request)
+        response = await call_next(request)
+        background_tasks = BackgroundTasks()
+        logs.finish(request=request, response=response)
+        background_tasks.add_task(logs.saveLogs, request)
+        response.background = background_tasks
+        return response
 
 
 ####################################################################################################################

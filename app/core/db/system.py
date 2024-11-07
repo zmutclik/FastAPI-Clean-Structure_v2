@@ -106,6 +106,7 @@ if os.path.exists(DB_FILE):
                         **{
                             "text": "Dashboard",
                             "href": "/page/dashboard",
+                            "segment": "dashboard",
                             "icon": "fas fa-tachometer-alt",
                             "icon_color": "",
                             "sort": 1,
@@ -118,8 +119,9 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "System",
+                            "segment": "system",
                             "href": "#",
-                            "icon": "fas fa-angle-left",
+                            "icon": "fas fa-cogs",
                             "icon_color": "",
                             "sort": 2,
                             "menutype_id": 1,
@@ -131,6 +133,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Users",
+                            "segment": "users",
                             "href": "/page/users/",
                             "icon_color": "",
                             "icon": "lni lni-user",
@@ -144,6 +147,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Scope",
+                            "segment": "scope",
                             "href": "/page/scopes/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
@@ -157,6 +161,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Group",
+                            "segment": "group",
                             "href": "/page/groups/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
@@ -170,6 +175,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Repository",
+                            "segment": "repository",
                             "href": "/page/repository/",
                             "icon": "lni lni-link",
                             "icon_color": "",
@@ -183,6 +189,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Settings",
+                            "segment": "setting",
                             "href": "/page/systemsettings/",
                             "icon": "lni lni-cog",
                             "icon_color": "",
@@ -196,6 +203,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Logs",
+                            "segment": "logs",
                             "href": "/page/logs/",
                             "icon": "lni lni-travel",
                             "icon_color": "",
@@ -209,6 +217,7 @@ if os.path.exists(DB_FILE):
                     MenuTable(
                         **{
                             "text": "Documentation",
+                            "segment": "documentation",
                             "href": "/page/documentation",
                             "icon": "lni lni-files",
                             "icon_color": "",

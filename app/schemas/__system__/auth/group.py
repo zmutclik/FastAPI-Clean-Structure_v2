@@ -12,3 +12,8 @@ class Groups(BaseModel):
 class GroupSave(BaseModel):
     group: str
     desc: str
+
+
+class GroupIn(GroupSave):
+    menutype_id: int
+    menu: list

@@ -1,10 +1,11 @@
 from typing import Generic, TypeVar, List, Optional, Union, Annotated, Any, Dict
-from pydantic import BaseModel, Json, Field, EmailStr
+from pydantic import BaseModel, Json, Field, EmailStr, field_validator
 from datetime import date, time, datetime
 
 
 class MenuSave(BaseModel):
     text: str
+    segment: str
     tooltip: Optional[str] = None
     href: str
     icon: str
@@ -16,10 +17,15 @@ class MenuSave(BaseModel):
 class Menu(BaseModel):
     id: str = Field(coerce_numbers_to_str=True)
     text: str
+    segment: str
     tooltip: Optional[str] = None
     href: str
     icon: str
     disabled: Optional[bool] = None
+
+
+class MenuData(Menu):
+    parent_id: str = Field(coerce_numbers_to_str=True)
 
 
 class MenusChild_4(Menu):

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.core.db.system import MenuTable, MenuTypeTable
-from app.schemas.__system__.menu import Menus, Menu, MenuSave
+from app.schemas.__system__.menu import Menus, Menu, MenuSave, MenuData
 
 
 class MenuRepository:
@@ -10,7 +10,7 @@ class MenuRepository:
     def get(self, id: int):
         return self.session.query(MenuTable).filter(MenuTable.id == id).first()
 
-    def get_0(self, menutype_id: int, parent_id: int = 0):
+    def get_0(self, menutype_id: int, parent_id: int = 0, filter_menu: list = None):
         res = []
         data = (
             self.session.query(MenuTable)
@@ -19,12 +19,17 @@ class MenuRepository:
             .all()
         )
         for item in data:
-            it = Menu.model_validate(item.__dict__)
+            it = MenuData.model_validate(item.__dict__)
             itj = it.model_dump()
             itj["children"] = []
             if self.getChildCount(item.id) > 0:
                 itj["children"] = self.get_0(menutype_id, item.id)
-            res.append(itj)
+            if filter_menu is None:
+                res.append(itj)
+            else:
+                if item.id in filter_menu:
+                    res.append(itj)
+
         return res
 
     def getType(self, menutype: str):
@@ -36,11 +41,18 @@ class MenuRepository:
     def getChildCount(self, parent_id: int):
         return self.session.query(MenuTable).filter(MenuTable.parent_id == parent_id).count()
 
+    def list_parent(self, list_menu: list[int]):
+        res = []
+        for item in self.session.query(MenuTable).filter(MenuTable.id.in_(list_menu)).all():
+            if item.parent_id > 0:
+                res.append(item.parent_id)
+        return res
+
     def getTypeID(self, id: int):
         return self.session.query(MenuTypeTable).filter(MenuTypeTable.id == id).first()
 
     def all(self, id_menutype: int):
-        return self.session.query(MenuTable).filter(MenuTable.id_menutype == id_menutype).order_by(MenuTable.sort).all()
+        return self.session.query(MenuTable).filter(MenuTable.menutype_id == id_menutype).order_by(MenuTable.parent_id, MenuTable.sort).all()
 
     def allType(self):
         return self.session.query(MenuTypeTable).order_by(MenuTypeTable.menutype).all()

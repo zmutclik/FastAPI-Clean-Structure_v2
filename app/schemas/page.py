@@ -7,6 +7,7 @@ from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import get_pages_user
 
 from app.repositories.__system__.auth import SessionRepository
+from app.services.__system__.menu import get_menus
 
 import threading
 
@@ -17,6 +18,7 @@ class PageResponseSchemas:
         self.path = path_template
         self.context = {}
         self.user: UserSchemas = None
+        self.sidemenu = []
 
     def media_type(self, path: str):
         if path.find(".js") > 0:
@@ -27,10 +29,12 @@ class PageResponseSchemas:
     def page(self, req: Request, res: Response, user: Annotated[UserSchemas, Depends(get_pages_user)]):
         self.req = req
         self.user = user
+        self.sidemenu = get_menus(1, user.id, req.scope["route"].name)
         self.initContext()
 
-        thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
-        thread.start()
+        if not config.SESSION_DISABLE:
+            thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
+            thread.start()
 
         return req
 
@@ -38,16 +42,18 @@ class PageResponseSchemas:
         self.req = req
         self.user = user
         self.initContext()
-        if req.state.clientId != cId or req.state.sessionId != sId:
-            raise HTTPException(status_code=404)
+        if not config.SESSION_DISABLE:
+            if req.state.clientId != cId or req.state.sessionId != sId:
+                raise HTTPException(status_code=404)
         return req
 
     def pageDependsNonUser(self, req: Request, cId: str, sId: str):
         self.req = req
         self.user: UserSchemas = None
         self.initContext()
-        if req.state.clientId != cId or req.state.sessionId != sId:
-            raise HTTPException(status_code=404)
+        if not config.SESSION_DISABLE:
+            if req.state.clientId != cId or req.state.sessionId != sId:
+                raise HTTPException(status_code=404)
         return req
 
     def addData(self, key, value):
@@ -57,11 +63,17 @@ class PageResponseSchemas:
         self.context = {}
         self.addData("app_name", config.APP_NAME)
         self.addData("app_version", config.APP_VERSION)
-        self.addData("clientId", self.req.state.clientId)
-        self.addData("sessionId", self.req.state.sessionId)
+        if not config.SESSION_DISABLE:
+            self.addData("clientId", self.req.state.clientId)
+            self.addData("sessionId", self.req.state.sessionId)
+        else:
+            self.addData("clientId", self.req.cookies.get(config.CLIENTID_KEY))
+            self.addData("sessionId", self.req.cookies.get(config.SESSION_KEY))
+
         self.addData("TOKEN_KEY", config.TOKEN_KEY)
         self.addData("segment", self.req.scope["route"].name)
         self.addData("userloggedin", self.user)
+        self.addData("sidemenu", self.sidemenu)
         self.addData("TOKEN_EXPIRED", (config.TOKEN_EXPIRED * 60 * 1000) - 2000)
 
     def response(

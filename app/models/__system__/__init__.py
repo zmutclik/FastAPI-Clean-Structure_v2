@@ -1,7 +1,7 @@
 from .logs import TableLogs, TableIpAddress
 from .scope import ScopeTable, UserScopeTable
 from .users import UsersTable
-from .group import GroupsTable, UserGroupTable
+from .group import GroupsTable, UserGroupTable, GroupMenuTable
 from .menu import MenuTable, MenuTypeTable
 
 from .system import SystemTable
@@ -18,6 +18,7 @@ __all__ = [
     "UsersTable",
     "UserScopeTable",
     "GroupsTable",
+    "GroupMenuTable",
     "UserGroupTable",
     "SessionTable",
     "SessionEndTable",

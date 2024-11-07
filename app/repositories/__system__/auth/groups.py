@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.core.db.auth import GroupsTable as MainTable
+from app.core.db.auth import GroupsTable as MainTable, GroupMenuTable
 
 
 class GroupsRepository:
@@ -24,6 +24,13 @@ class GroupsRepository:
             result.append(d)
         return result
 
+    def list_menu(self, menutype_id: int, id_group: int):
+        dt = self.session.query(GroupMenuTable).filter(GroupMenuTable.id_group == id_group, GroupMenuTable.menutype_id == menutype_id).all()
+        result = []
+        for it in dt:
+            result.append(it.menu_id)
+        return result
+
     def create(self, dataIn):
         data = MainTable(**dataIn)
         self.session.add(data)
@@ -40,4 +47,14 @@ class GroupsRepository:
     def delete(self, id_delete: int):
         data = self.getById(id_delete)
         self.session.delete(data)
+        self.session.commit()
+
+    def empty_menu(self, id_group: int, menutype_id: int) -> None:
+        self.session.query(GroupMenuTable).filter(GroupMenuTable.id_group == id_group, GroupMenuTable.menutype_id == menutype_id).delete()
+        self.session.commit()
+
+    def save_menu(self, id_group: int, menutype_id: int, menus: list[int]):
+        for item in menus:
+            data = GroupMenuTable(id_group=id_group, menutype_id=menutype_id, menu_id=item)
+            self.session.add(data)
         self.session.commit()

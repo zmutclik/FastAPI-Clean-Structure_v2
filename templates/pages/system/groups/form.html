@@ -18,6 +18,8 @@
 
 <!-- Theme style -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
 {% endblock stylesheets %}
 
@@ -49,22 +51,49 @@
                         <div class="card-header">
                         </div>
                         <!-- /.card-header -->
+
                         <div class="card-body">
-                            <form id="form_">
-                                <input type="hidden" id="id" {% if scope %} value="{{group.id}}" {% endif %}>
-                                <div class="mb-3">
-                                    <label for="full_name" class="form-label">Grup</label>
-                                    <input type="text" class="form-control" name="group" placeholder="Nama Grup" {% if group %} value="{{group.group}}" readonly {% endif %} required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Deskripsi</label>
-                                    <input type="text" class="form-control" name="desc" placeholder="Deskripsi Grup" {% if group %} value="{{group.desc}}" {% endif %} required>
-                                </div>
-                                <div class="mb-3 mt-5 float-end">
-                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            PRIVILEGE MENU
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <select id="menutype_id" class="form-select" aria-label="select">
+                                                    <option value="0" selected>Pilih Menu Tipe ID</option>
+                                                    {% for item in menutype %}
+                                                    <option value="{{ item.id }}">{{ item.menutype }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="row">
+                                                <div id="jstree_">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                            </form>
+                                <div class="col-6">
+                                    <form id="form_">
+                                        <input type="hidden" id="id" {% if scope %} value="{{group.id}}" {% endif %}>
+                                        <div class="mb-3">
+                                            <label for="full_name" class="form-label">Grup</label>
+                                            <input type="text" class="form-control" name="group" placeholder="Nama Grup" {% if group %} value="{{group.group}}" readonly {% endif %} required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Deskripsi</label>
+                                            <input type="text" class="form-control" name="desc" placeholder="Deskripsi Grup" {% if group %} value="{{group.desc}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3 mt-5 float-end">
+                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -98,6 +127,7 @@
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <!-- ------------------- -->
 <script>
     const api = axios.create({
@@ -106,6 +136,6 @@
         headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
     });
 </script>
-<script src="/page/groups/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script src="/page/groups/{{clientId}}/{{sessionId}}/{{app_version}}/form.js{% if group %}/?group={{group.id}}{% endif %}"></script>
 
 {% endblock javascripts %}

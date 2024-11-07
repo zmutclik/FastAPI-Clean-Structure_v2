@@ -25,6 +25,8 @@ class Config(BaseModel):
     RABBITMQ: Union[str, None] = None
     CORS: Union[list, None] = None
 
+    SESSION_DISABLE: bool = False
+
 
 def repository(db, alokasi):
     d = (
@@ -69,4 +71,5 @@ with engine_db.begin() as connection:
             DATABASE=repository(db, "MariaDB"),
             RABBITMQ=repository(db, "RabbitMQ"),
             CORS=crossOrigin(db),
+            SESSION_DISABLE=False,
         )

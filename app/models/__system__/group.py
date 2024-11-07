@@ -16,6 +16,7 @@ class GroupsTable(Base):
     desc = Column(String(256))
 
     USERGROUPS = relationship("UserGroupTable", back_populates="GROUPS")
+    LISTMENU = relationship("GroupMenuTable", back_populates="GROUPS")
 
 
 class UserGroupTable(Base):
@@ -35,3 +36,14 @@ class UserGroupTable(Base):
     @hybrid_property
     def desc(self) -> str:
         return self.GROUPS.desc
+
+
+class GroupMenuTable(Base):
+    __tablename__ = "groups_menu"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    menutype_id = Column(Integer, index=True)
+    menu_id = Column(Integer, index=True)
+    id_group = Column(Integer, ForeignKey("groups.id"), index=True)
+
+    GROUPS = relationship("GroupsTable", back_populates="LISTMENU")

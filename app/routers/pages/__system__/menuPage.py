@@ -133,19 +133,19 @@ def data_menu(id: int, menutype_id: int, req: req_depends, c_user: c_user_scope,
     return data
 
 
-def menu_sorting_save(repo, dataIn: List[dict]):
+def menu_sorting_save(repo, parent_id: int, dataIn: List[dict]):
     i = 0
     for item in dataIn:
         i = i + 1
-        repo.update(int(item.id), {"sort": i})
+        repo.update(int(item.id), {"parent_id": parent_id, "sort": i})
         if len(item.children) > 0:
-            menu_sorting_save(repo, item.children)
+            menu_sorting_save(repo, item.id, item.children)
 
 
 @router.post("/detail/{cId}/{sId}/{menutype_id:int}/menus", status_code=201, include_in_schema=False)
 def menu_sorting(dataIn: List[Menus], menutype_id: int, req: req_depends, c_user: c_user_scope, db=db):
     repo = MenuRepository(db)
-    menu_sorting_save(repo, dataIn)
+    menu_sorting_save(repo, 0, dataIn)
 
 
 @router.post("/detail/{cId}/{sId}/{menutype_id:int}/data", response_model=Menu, status_code=201, include_in_schema=False)

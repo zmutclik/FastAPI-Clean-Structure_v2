@@ -14,6 +14,7 @@ class MenuTable(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
     text = Column(String(32), unique=True, index=True)
+    segment = Column(String(32), index=True)
     tooltip = Column(String(256))
     href = Column(String(256))
     icon = Column(String(256))

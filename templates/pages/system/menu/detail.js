@@ -29,6 +29,7 @@ mnEditor.onClickEdit((event) => {
             $('#menutooltop').val(response.data.tooltop);
             $('#menuhref').val(response.data.href);
             $('#menuicon').val(response.data.icon);
+            $('#menusegment').val(response.data.segment);
             if (response.data.disabled)
                 $('#menudisabled').val('1').trigger('change');
             else
@@ -97,6 +98,7 @@ $(document).ready(function () {
         $('#menutooltop').val('');
         $('#menuhref').val('');
         $('#menuicon').val('');
+        $('#menusegment').val('');
         $('#menudisabled').val('0').trigger('change');
     });
 
@@ -113,6 +115,7 @@ $(document).ready(function () {
                 "href": $("#form_ input[name='href']").val(),
                 "type": $("#form_ input[name='type']").val(),
                 "icon": $("#form_ input[name='icon']").val(),
+                "segment": $("#form_ input[name='segment']").val(),
                 "disabled": $("#menudisabled").val(),
             })
                 .then(function (response) {

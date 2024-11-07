@@ -14,6 +14,32 @@ var form_ = $("#form_").validate({
 $(document).ready(function () {
     $("#form_ input[name='group']").focus();
 
+    $('#jstree_').jstree({
+        'core': {
+            'data': {
+                'url': function (node) {
+                    return 'menu/' + $('#menutype_id').val() + '/{{group}}';
+                }
+            }
+        }, "plugins": ["checkbox"]
+    });
+
+    $('#menutype_id').on('change', function () {
+        $('#jstree_').jstree(true).destroy();
+
+        $('#jstree_').jstree({
+            'core': {
+                'data': {
+                    'url': function (node) {
+                        return 'menu/' + $('#menutype_id').val() + '/{{group}}';
+                    }
+                }
+            }, "plugins": ["checkbox"]
+        });
+
+
+    });
+
     $(".btnBack").on("click", function () {
         window.location.href = '/page/groups/';
     });
@@ -26,6 +52,8 @@ $(document).ready(function () {
             api.post('', {
                 "group": $("#form_ input[name='group']").val(),
                 "desc": $("#form_ input[name='desc']").val(),
+                "menutype_id": $("#menutype_id").val(),
+                "menu": $('#jstree_').jstree('get_selected'),
             })
                 .then(function (response) {
                     idU = response.data.id;
