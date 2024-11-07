@@ -109,4 +109,5 @@ class LogServices:
 
     def saveLogs(self, request):
         if request.state.islogsave:
-            self.repository.create(self.data.model_dump())
+            if "/static/" not in self.data.path:
+                self.repository.create(self.data.model_dump())

@@ -41,7 +41,7 @@ def page_system_menu(req: req_page):
 
 
 @router.get("/detail/{cId}/{sId}/{menutype_id:int}", response_class=HTMLResponse, include_in_schema=False)
-def page_system_form_detail(menutype_id: int, req: req_page, db=db):
+def page_system_menu_form_detail(menutype_id: int, req: req_page, db=db):
     pageResponse.addData("menutype", MenuRepository(db).getTypeID(menutype_id))
     return pageResponse.response("detail.html")
 
