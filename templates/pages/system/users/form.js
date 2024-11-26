@@ -25,7 +25,7 @@ $(document).ready(function () {
     $("#form_ input[name='full_name']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/users/';
+        window.location.href = '{{prefix_url}}/';
     });
 
     $("#form_").on("submit", function () {
@@ -48,11 +48,9 @@ $(document).ready(function () {
             })
                 .then(function (response) {
                     idU = response.data.id;
-                    console.log(response);
-                    
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {

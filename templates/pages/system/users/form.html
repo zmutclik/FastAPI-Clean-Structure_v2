@@ -132,7 +132,7 @@
 {% include 'includes/_all_javascripts.html' %}
 {% include 'includes/_form_javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '/page/users/{{clientId}}/{{sessionId}}{% if user %}/{{user.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="/page/users/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if user %}/{{user.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
 
 {% endblock javascripts %}

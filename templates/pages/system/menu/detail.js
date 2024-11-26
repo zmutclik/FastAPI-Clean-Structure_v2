@@ -38,7 +38,6 @@ mnEditor.onClickEdit((event) => {
             toggleBtn();
         })
         .catch(function (error) {
-            console.log(error);
         })
         .finally(function () {
         });
@@ -52,7 +51,6 @@ function getMenu() {
             mnEditor.setArray(response.data);
         })
         .catch(function (error) {
-            console.log(error);
         })
         .finally(function () {
             mnEditor.mount();
@@ -89,7 +87,7 @@ $(document).ready(function () {
     getMenu();
     toggleBtn();
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/menu/';
+        window.location.href = '{{prefix_url}}/';
     });
     $("#btnAdd,.btnCancel").on("click", function () {
         toggleBtn();
@@ -148,11 +146,9 @@ $(document).ready(function () {
     });
     $("#btnSabeSort").on("click", function () {
         let output = mnEditor.getString();
-        console.log(output);
         $("#MenuEditor_").LoadingOverlay("show");
         api.post('/menus', JSON.parse(output))
             .then(function (response) {
-                console.log(response);
             })
             .catch(function (error) {
             })

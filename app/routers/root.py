@@ -6,7 +6,7 @@ from app.schemas import PageResponseSchemas
 
 router = APIRouter()
 
-pageResponse = PageResponseSchemas("templates", "pages/dashboard/")
+pageResponse = PageResponseSchemas("templates", "pages/dashboard/", router.prefix)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 
 

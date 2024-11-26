@@ -21,7 +21,7 @@ $(document).ready(function () {
     $("#form_ input[name='name']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/repository/';
+        window.location.href = '{{prefix_url}}/';
     });
 
     $("#form_").on("submit", function () {
@@ -41,7 +41,7 @@ $(document).ready(function () {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {

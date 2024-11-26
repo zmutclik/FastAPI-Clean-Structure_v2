@@ -16,7 +16,7 @@ router = APIRouter(
     prefix="/profile",
     tags=["FORM"],
 )
-pageResponse = PageResponseSchemas("templates", "pages/auth/profile/")
+pageResponse = PageResponseSchemas("templates", "pages/auth/profile/", router.prefix)
 db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]

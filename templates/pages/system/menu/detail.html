@@ -18,7 +18,6 @@
 
 <!-- Theme style -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css"><!-- Styles -->
-<link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 <link rel="stylesheet" href="/static/assets/css/menu-editor.css">
 
 
@@ -56,9 +55,6 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div id="MenuEditor_">
-
-
-
                                     </div>
 
                                     <div class="mb-3 mt-1 float-end">
@@ -162,11 +158,11 @@
 <!-- ------------------- -->
 <script>
     const api = axios.create({
-        baseURL: '/page/menu/detail/{{clientId}}/{{sessionId}}/{{menutype.id}}',
+        baseURL: '{{prefix_url}}/detail/{{clientId}}/{{sessionId}}/{{menutype.id}}',
         timeout: 2000,
         headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
     });
 </script>
-<script src="/page/menu/{{clientId}}/{{sessionId}}/{{app_version}}/detail.js"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/detail.js"></script>
 
 {% endblock javascripts %}

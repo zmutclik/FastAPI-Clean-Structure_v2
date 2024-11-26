@@ -7,7 +7,7 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '/page/logs/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 d.search.time_start = moment($('#time_start').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
                 d.search.time_end = moment($('#time_end').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");

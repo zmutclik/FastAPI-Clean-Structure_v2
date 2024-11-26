@@ -4,7 +4,7 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '/page/repository/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
@@ -28,8 +28,8 @@ $(document).ready(function () {
             sClass: "right", searchable: false, orderable: false, bSortable: false, targets: -1, sWidth: "0px",
             render: function (data, type, row, meta) {
                 btnhtml = "<div class=\"btn-group\" role=\"group\">";
-                btnhtml += "<button type=\"button\" class=\"btn btn-success btnEdit\"><i class=\"lni lni-pencil-alt\"></i></button>";
-                btnhtml += "<button type=\"button\" class=\"btn btn-danger btnDelete\"><i class=\"lni lni-trash-can\"></i></button>";
+                btnhtml += "<button type=\"button\" class=\"btn btn-success btnEdit\"><i class=\"fas fa-pencil-alt\"></i></button>";
+                btnhtml += "<button type=\"button\" class=\"btn btn-danger btnDelete\"><i class=\"fas fa-trash-alt\"></i></button>";
                 btnhtml += "</div>"
                 return btnhtml;
             }
@@ -37,11 +37,11 @@ $(document).ready(function () {
     });
 
     $("#btnTambah").on("click", function () {
-        window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/add';
+        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/add';
     });
 
     $("#table_").on("click", '.btnEdit', function () {
-        window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
     });
 
     $("#table_").on("click", '.btnDelete', function () {

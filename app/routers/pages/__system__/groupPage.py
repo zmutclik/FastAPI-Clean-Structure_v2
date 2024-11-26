@@ -15,11 +15,11 @@ from app.core.db.system import get_db as get_db_sys
 
 
 router = APIRouter(
-    prefix="/groups",
+    prefix="/sys/groups",
     tags=["FORM"],
 )
 
-pageResponse = PageResponseSchemas("templates", "pages/system/groups/")
+pageResponse = PageResponseSchemas("templates", "pages/system/groups/", router.prefix)
 db: Session = Depends(get_db)
 db_sys: Session = Depends(get_db_sys)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]

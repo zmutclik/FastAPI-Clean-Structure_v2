@@ -10,7 +10,7 @@ router = APIRouter(
     tags=["FORM"],
 )
 
-pageResponse = PageResponseSchemas("templates", "pages/")
+pageResponse = PageResponseSchemas("templates", "pages/", router.prefix)
 req_page = Annotated[None, Depends(pageResponse.page)]
 
 

@@ -132,11 +132,11 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
-                            "text": "Users",
+                            "text": "Akun",
                             "segment": "users",
-                            "href": "/page/users/",
+                            "href": "/page/sys/users/",
                             "icon_color": "",
-                            "icon": "lni lni-user",
+                            "icon": "fas fa-house-user",
                             "sort": 1,
                             "menutype_id": 1,
                             "parent_id": 2,
@@ -148,9 +148,9 @@ if os.path.exists(DB_FILE):
                         **{
                             "text": "Menu",
                             "segment": "menu",
-                            "href": "/page/menu/",
+                            "href": "/page/sys/menu/",
                             "icon_color": "",
-                            "icon": "lni lni-menu",
+                            "icon": "fas fa-list-alt",
                             "sort": 2,
                             "menutype_id": 1,
                             "parent_id": 2,
@@ -162,8 +162,8 @@ if os.path.exists(DB_FILE):
                         **{
                             "text": "Scope",
                             "segment": "scope",
-                            "href": "/page/scopes/",
-                            "icon": "lni lni-map-marker",
+                            "href": "/page/sys/scopes/",
+                            "icon": "fas fa-map-marker-alt",
                             "icon_color": "",
                             "sort": 3,
                             "menutype_id": 1,
@@ -176,8 +176,8 @@ if os.path.exists(DB_FILE):
                         **{
                             "text": "Group",
                             "segment": "group",
-                            "href": "/page/groups/",
-                            "icon": "lni lni-map-marker",
+                            "href": "/page/sys/groups/",
+                            "icon": "fas fa-object-group",
                             "icon_color": "",
                             "sort": 4,
                             "menutype_id": 1,
@@ -188,10 +188,10 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
-                            "text": "Repository",
+                            "text": "Gudang Link",
                             "segment": "repository",
-                            "href": "/page/repository/",
-                            "icon": "lni lni-link",
+                            "href": "/page/sys/repository/",
+                            "icon": "fas fa-link",
                             "icon_color": "",
                             "sort": 5,
                             "menutype_id": 1,
@@ -202,10 +202,10 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
-                            "text": "Settings",
+                            "text": "Setting Sistem",
                             "segment": "setting",
-                            "href": "/page/systemsettings/",
-                            "icon": "lni lni-cog",
+                            "href": "/page/sys/systemsettings/",
+                            "icon": "fas fa-headset",
                             "icon_color": "",
                             "sort": 6,
                             "menutype_id": 1,
@@ -218,8 +218,8 @@ if os.path.exists(DB_FILE):
                         **{
                             "text": "Logs",
                             "segment": "logs",
-                            "href": "/page/logs/",
-                            "icon": "lni lni-travel",
+                            "href": "/page/sys/logs/",
+                            "icon": "fas fa-map-marked-alt",
                             "icon_color": "",
                             "sort": 7,
                             "menutype_id": 1,
@@ -233,7 +233,7 @@ if os.path.exists(DB_FILE):
                             "text": "Documentation",
                             "segment": "documentation",
                             "href": "/page/documentation",
-                            "icon": "lni lni-files",
+                            "icon": "fas fa-file-code",
                             "icon_color": "",
                             "sort": 3,
                             "menutype_id": 1,

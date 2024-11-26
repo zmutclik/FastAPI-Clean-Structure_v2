@@ -145,11 +145,11 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_id.min.js" integrity="sha512-Orvt00GKq6XzBWqbltE094YknH2BN78wpQqLT/P3Jx3nhaBmEbd7JzVDJ2qLTu8J8SuMoACKoIxk851FS5ZIUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '/page/systemsettings/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
-<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/index_cors.js"></script>
-<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
-<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form_changelog.js"></script>
-<script src="/page/systemsettings/{{clientId}}/{{sessionId}}/{{app_version}}/form_cors.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/index_cors.js"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form_changelog.js"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form_cors.js"></script>
 
 {% endblock javascripts %}

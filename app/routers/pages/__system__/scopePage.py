@@ -13,11 +13,11 @@ from app.services.__system__.auth import get_active_user
 
 
 router = APIRouter(
-    prefix="/scopes",
+    prefix="/sys/scopes",
     tags=["FORM"],
 )
 
-pageResponse = PageResponseSchemas("templates", "pages/system/scopes/")
+pageResponse = PageResponseSchemas("templates", "pages/system/scopes/", router.prefix)
 db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]

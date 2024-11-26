@@ -15,7 +15,7 @@ $(document).ready(function () {
     $("#form_ input[name='scope']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/menu/';
+        window.location.href = '{{prefix_url}}/';
     });
 
     $("#form_").on("submit", function () {
@@ -31,7 +31,7 @@ $(document).ready(function () {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/menu/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {

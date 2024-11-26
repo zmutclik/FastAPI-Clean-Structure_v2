@@ -111,11 +111,11 @@
 <!-- ------------------- -->
 <script>
     const api = axios.create({
-        baseURL: '/page/groups/{{clientId}}/{{sessionId}}{% if group %}/{{group.id}}{% endif %}',
+        baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if group %}/{{group.id}}{% endif %}',
         timeout: 2000,
         headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
     });
 </script>
-<script src="/page/groups/{{clientId}}/{{sessionId}}/{{app_version}}/form.js{% if group %}/?group={{group.id}}{% endif %}"></script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js{% if group %}/?group={{group.id}}{% endif %}"></script>
 
 {% endblock javascripts %}

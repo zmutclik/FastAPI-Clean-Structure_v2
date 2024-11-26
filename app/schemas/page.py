@@ -13,12 +13,13 @@ import threading
 
 
 class PageResponseSchemas:
-    def __init__(self, path_Jinja2Templates: str, path_template: str):
+    def __init__(self, path_Jinja2Templates: str, path_template: str, prefix_url: str):
         self.templates = Jinja2Templates(directory=path_Jinja2Templates)
         self.path = path_template
         self.context = {}
         self.user: UserSchemas = None
         self.sidemenu = []
+        self.prefix_url = prefix_url
 
     def media_type(self, path: str):
         if path.find(".js") > 0:
@@ -63,13 +64,13 @@ class PageResponseSchemas:
         self.context = {}
         self.addData("app_name", config.APP_NAME)
         self.addData("app_version", config.APP_VERSION)
+        self.addData("prefix_url", "/page" + self.prefix_url)
         if not config.SESSION_DISABLE:
             self.addData("clientId", self.req.state.clientId)
             self.addData("sessionId", self.req.state.sessionId)
         else:
             self.addData("clientId", self.req.cookies.get(config.CLIENTID_KEY))
             self.addData("sessionId", self.req.cookies.get(config.SESSION_KEY))
-
         self.addData("TOKEN_KEY", config.TOKEN_KEY)
         self.addData("segment", self.req.scope["route"].name)
         self.addData("userloggedin", self.user)
