@@ -1,0 +1,71 @@
+volumes:
+  app_config:
+    driver_opts:
+      type: nfs
+      o: addr=${NFS_IP},nfsvers=4
+      device: ${NFS_CONFIG}
+  files_json:
+    driver_opts:
+      type: nfs
+      o: addr=${NFS_IP},nfsvers=4
+      device: ${NFS_APJSON}
+  db_backup:
+    driver_opts:
+      type: nfs
+      o: addr=${NFS_IP},nfsvers=4
+      device: ${NFS_BACKUP}
+  # mysqldata:
+  #   driver_opts:
+  #     type: nfs
+  #     o: addr=${NFS_IP},nfsvers=4
+  #     device: ${NFS_MYDATA}
+
+#######################################################################################################################
+services:
+  app_db:
+    build:
+      context: .
+      dockerfile: files/docker/dockerfile_db
+      args:
+        - DB_ROOTPASSWORD=${DB_ROOTPASSWORD}
+        - DB_APPUSER=${DB_APPUSER}
+        - DB_APPPASS=${DB_APPPASS}
+        - DB_NAME=${DB_NAME}
+    container_name: JSON_REPOSITORY_DB
+    hostname: jsonrepositorydb
+    volumes:
+      # - "./files/database/data/:/var/lib/mysql/"
+      - "db_backup:/backup/"
+      - "./config/db_backup.cnf:/etc/db_backup.cnf"
+    dns:
+      - ${DNS1}
+      - ${DNS2}
+    networks:
+      macvlan000:
+        ipv4_address: ${DB__IPADDRESS}
+
+  #######################################################################################################################
+  app:
+    build:
+      context: .
+      dockerfile: files/docker/dockerfile_app
+    container_name: JSON_REPOSITORY
+    hostname: jsonrepository
+    volumes:
+      - "./:/code/"
+      - "app_config:/code/config"
+      - "files_json:/code/files/database/json"
+    dns:
+      - ${DNS1}
+      - ${DNS2}
+    networks:
+      macvlan000:
+        ipv4_address: ${APP_IPADDRESS}
+    depends_on:
+      - app_db
+
+#######################################################################################################################
+networks:
+  macvlan000:
+    external:
+      name: ${MACVLAN}

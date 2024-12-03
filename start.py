@@ -6,16 +6,10 @@ import argparse
 from subprocess import Popen
 
 #######################################################################################################################
+if not os.access("config/.gitkeep", os.W_OK):
+    os.chmod("/code/config/", 0o0777)
 if not os.access("files/database/db/.gitkeep", os.W_OK):
-    print("===ERROR===")
-    print("===ERROR===")
-    sys.exit('Tolong Buat Folder "Files/database/db" menjadi Writable.')
-#######################################################################################################################
-parser = argparse.ArgumentParser(
-    description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan."
-)
-parser.add_argument("module", help="Pilih salah satu = ws, celery atau fower")
-args = parser.parse_args()
+    os.chmod("/code/files/database/db/", 0o0777)
 
 #######################################################################################################################
 pathfile = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + os.sep)
@@ -29,29 +23,25 @@ APP_PORT = os.environ.get("APP_PORT", "8014")
 
 if __name__ == "__main__":
     ###################################################################################################################
-    print("APP_ENV : ", APP_ENV)
-    if args.module == "ws":
-        if APP_ENV == "PRODUCTION":
-            uvicorn.run(
-                "app:app",
-                port=int(APP_PORT),
-                host=APP_URL,
-                reload_dirs=["app"],
-                workers=2,
-                # reload=True,
-                # log_level="warning",
-                # no_access_log=True,
-                # ssl_keyfile='config/ssl/privkey.pem',
-                # ssl_certfile='config/ssl/cert.pem'
-            )
-        else:
-            uvicorn.run(
-                "app.main:app",
-                port=int(APP_PORT),
-                host=APP_URL,
-                reload=True,
-                reload_dirs=["app"],
-            )
-
-    # if args.module == "celery":
-    # exec( "python -m celery -A worker.celery.celery_app worker --loglevel=info"  )
+    print("### APP START ################################################################################################")
+    print("APP_ENV  : ", APP_ENV)
+    print("APP_URL  : ", APP_URL)
+    print("APP_PORT : ", APP_PORT)
+    if APP_ENV == "PRODUCTION":
+        uvicorn.run(
+            "app:app",
+            port=int(APP_PORT),
+            host=APP_URL,
+            reload_dirs=["app"],
+            workers=2,
+            log_level="warning",
+            reload=True,
+        )
+    else:
+        uvicorn.run(
+            "app.main:app",
+            port=int(APP_PORT),
+            host=APP_URL,
+            reload=True,
+            reload_dirs=["app"],
+        )

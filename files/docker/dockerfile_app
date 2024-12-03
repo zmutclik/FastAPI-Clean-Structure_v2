@@ -1,0 +1,34 @@
+FROM python:bullseye
+
+RUN mkdir /code
+WORKDIR /code
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+RUN groupadd -r semut && useradd -r -g semut semut --home-dir /code
+RUN chown semut:semut /code
+
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get -y install netselect-apt
+# RUN apt-get install npm -y
+RUN apt-get install nano -y
+RUN apt-get install -y python3-dev
+RUN apt-get install -y libcups2-dev
+RUN apt-get install -y wkhtmltopdf
+
+RUN ln -snf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && echo Asia/Jakarta > /etc/timezone
+RUN apt-get install tzdata -y
+RUN apt-get install ghostscript -y
+RUN apt clean --dry-run
+
+RUN python -m venv /venv
+
+COPY ./requirements.txt /code/requirements.txt
+
+RUN /venv/bin/python3 -m pip install --upgrade pip
+RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+RUN rm /etc/ssl/openssl.cnf
+COPY ./files/samples/openssl.cnf /etc/ssl/openssl.cnf
+
+CMD ["/venv/bin/python3", "/code/start.py"]
