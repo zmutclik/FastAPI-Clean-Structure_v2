@@ -100,6 +100,7 @@ def post_register(
     user.created_user = "form_register"
     user.hashed_password = get_password_hash(dataIn.password)
     usersaved = userrepo.create(user.model_dump())
+    userrepo.add_groups(usersaved.id, [2])
 
     thread = threading.Thread(target=telegram_bot_sendtext, args=(usersaved.username, usersaved.email, usersaved.id))
     thread.start()

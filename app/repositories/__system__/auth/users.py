@@ -52,8 +52,8 @@ class UsersRepository:
         self.session.query(UserGroupTable).filter(UserGroupTable.id_user == id_user).delete()
         self.session.commit()
 
-    def add_groups(self, id_user: int, scopes: list[int]):
-        for item in scopes:
+    def add_groups(self, id_user: int, groups: list[int]):
+        for item in groups:
             data = UserGroupTable(id_user=id_user, id_group=item)
             self.session.add(data)
         self.session.commit()

@@ -68,4 +68,8 @@ if os.path.exists(fileDB_ENGINE):
                 db.add(GroupMenuTable(**{"menutype_id": 1, "menu_id": 8, "id_group": 1}))
                 db.add(GroupMenuTable(**{"menutype_id": 1, "menu_id": 9, "id_group": 1}))
                 db.add(GroupMenuTable(**{"menutype_id": 1, "menu_id": 10, "id_group": 1}))
+                
+                db.add(GroupMenuTable(**{"menutype_id": 1, "menu_id": 1, "id_group": 2}))
+                db.add(GroupMenuTable(**{"menutype_id": 1, "menu_id": 10, "id_group": 2}))
+                
                 db.commit()
