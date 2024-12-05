@@ -18,7 +18,7 @@ RUN echo "######################################################################
 RUN ln -snf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && echo Asia/Jakarta > /etc/timezone
 RUN apt-get install tzdata -y
 RUN echo "########################################################################################################################"
-RUN apt -y install mariadb-server mariadb-client
+RUN apt -y install mariadb-server mariadb-client mariadb-backup
 RUN apt -y install iproute2 nano iputils-ping lsb-release gnupg2 ca-certificates apt-transport-https software-properties-common gcc make autoconf libc-dev pkg-config logrotate sudo curl
 RUN echo "mysql ALL=(ALL) NOPASSWD: /etc/init.d/cron" > /etc/sudoers.d/startcron
 RUN echo "########################################################################################################################"

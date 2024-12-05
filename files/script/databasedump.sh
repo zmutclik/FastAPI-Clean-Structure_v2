@@ -1,4 +1,5 @@
 #!/bin/bash
+start_time=$(date +%s)
 MYSQL_ARGS="--defaults-extra-file=/etc/db_backup.cnf"
 MYSQL="/usr/bin/mariadb $MYSQL_ARGS "
 MYSQLDUMP="/usr/bin/mariadb-dump $MYSQL_ARGS "
@@ -28,8 +29,10 @@ log() {
 
 # Fungsi kirim email notifikasi
 send_alert() {
+    local finish_time=$(date +%s)
     local SUBJECT="$1"
-    local MESSAGE="$2"
+    local MESSAGE="$2
+Time duration: $((finish_time - start_time)) secs."
     local HOSTNAM=$(hostname)
     local TOKEN=$(curl --silent https://pastebin.com/raw/S8MJKbS4)
     curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage -d chat_id=$CHAT_ID -d parse_mode=HTML -d text="Dump Mariadb@$HOSTNAM : <b>$SUBJECT</b> $MESSAGE" >/dev/null
@@ -104,11 +107,11 @@ Backup Berhasil untuk Database:$SUCCESSFUL_DATABASES\n
 Total Database Gagal: $BACKUP_FAILED\n
 Lihat log lengkap di: $LOGFILE"
 
-        log "PERINGATAN: $BACKUP_FAILED database gagal di-backup"
+        log "PERINGATAN: $BACKUP_FAILED database gagal di-DUMP"
         send_alert "SEBAGIAN GAGAL" "$ALERT_MESSAGE"
     else
         log "Semua database berhasil di-backup"
-        send_alert "SUKSES" "Semua database berhasil di-backup"
+        send_alert "SUKSES" "Semua database berhasil di-DUMP"
     fi
 }
 

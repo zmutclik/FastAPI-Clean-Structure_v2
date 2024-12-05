@@ -1,4 +1,5 @@
 #!/bin/bash
+start_time=$(date +%s)
 MYSQL_ARGS="--defaults-extra-file=/etc/db_backup.cnf"
 MYSQL="/usr/bin/mariadb $MYSQL_ARGS "
 MYSQLBACKUP="/usr/bin/mariabackup $MYSQL_ARGS "
@@ -45,8 +46,10 @@ validate_backup() {
 }
 # Fungsi kirim email notifikasi
 send_alert() {
+    local finish_time=$(date +%s)
     local SUBJECT="$1"
-    local MESSAGE="$2"
+    local MESSAGE="$2
+Time duration: $((finish_time - start_time)) secs."
     local HOSTNAM=$(hostname)
     local TOKEN=$(curl --silent https://pastebin.com/raw/S8MJKbS4)
     curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage -d chat_id=$CHAT_ID -d parse_mode=HTML -d text="Backup Mariadb@$HOSTNAM : <b>$SUBJECT</b> $MESSAGE" >/dev/null
@@ -63,16 +66,16 @@ backup_databases() {
     if [ $? -eq 0 ]; then
         # Validasi backup
         if validate_backup "$BACKUP_FILE"; then
-            log "Semua database berhasil di-backup"
-            send_alert "SUKSES" "Semua database berhasil di-backup"
+            log "Semua database berhasil di-BACKUP"
+            send_alert "SUKSES" "Semua database berhasil di-BACKUP"
         else
-            log "PERINGATAN: database gagal di-backup"
-            send_alert "PERINGATAN: database GAGAL di-backup" "$ALERT_MESSAGE"
+            log "PERINGATAN: database gagal di-BACKUP"
+            send_alert "PERINGATAN: database GAGAL di-BACKUP" "$ALERT_MESSAGE"
             rm -f "$BACKUP_FILE"
         fi
     else
         log "Full Backup gagal"
-        send_alert "PERINGATAN: database GAGAL di-backup" "$ALERT_MESSAGE"
+        send_alert "PERINGATAN: database GAGAL di-BACKUP" "$ALERT_MESSAGE"
         rm -f "$BACKUP_FILE"
     fi
 }
