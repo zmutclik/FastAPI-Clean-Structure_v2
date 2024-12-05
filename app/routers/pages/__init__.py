@@ -9,6 +9,7 @@ from .__system__.repositoryPage import router as repositoryPage
 from .__system__.settingsPage import router as settingsPage
 from .__system__.menuPage import router as menuPage
 from .__system__.logsPage import router as logsPage
+from .__system__.sessionPage import router as sessionPage
 from .__system__.documentationPage import router as documentationPage
 from .dashboardPage import router as dashboardPage
 
@@ -37,6 +38,7 @@ app.include_router(repositoryPage)
 app.include_router(settingsPage)
 app.include_router(menuPage)
 app.include_router(logsPage)
+app.include_router(sessionPage)
 app.include_router(documentationPage)
 
 

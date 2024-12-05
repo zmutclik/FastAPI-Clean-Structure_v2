@@ -230,6 +230,20 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
+                            "text": "Session",
+                            "segment": "session",
+                            "href": "/page/sys/session/",
+                            "icon": "fas fa-door-open",
+                            "icon_color": "",
+                            "sort": 8,
+                            "menutype_id": 1,
+                            "parent_id": 2,
+                        }
+                    )
+                )
+                db.add(
+                    MenuTable(
+                        **{
                             "text": "Documentation",
                             "segment": "documentation",
                             "href": "/page/documentation",
