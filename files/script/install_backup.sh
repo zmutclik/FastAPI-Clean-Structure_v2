@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BACKUP_SCRIPT="/backup/databasebackup.sh"
-CRON_LOG="/backup/log/database_backup_cron.log"
+CRON_LOG="/backup/log/cron_backup.log"
 JAMEE=$(( $RANDOM % 2 ));
 MENIT=$(( $RANDOM % 50 ));
 
