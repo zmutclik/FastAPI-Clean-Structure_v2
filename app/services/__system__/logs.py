@@ -24,6 +24,7 @@ class dataLogs(BaseModel):
     session_id: Union[str, None] = None
     platform: str
     browser: str
+    referer: str
     path: str
     path_params: Union[str, None] = None
     method: str
@@ -93,6 +94,7 @@ class LogServices:
             session_id=session_id,
             platform=platform,
             browser=browser,
+            referer=request.headers.get('referer'),
             path=request.scope["path"],
             path_params=self.parse_params(request),
             method=request.method,

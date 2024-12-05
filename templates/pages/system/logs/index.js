@@ -15,7 +15,7 @@ $(document).ready(function () {
                 d.search.method = $('#method').val();
                 d.search.status = $('#status').val();
                 d.search.path = $('#querypath').val();
-                d.search.params = $('#queryparams').val();
+                d.search.referer = $('#queryreferer').val();
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
 
@@ -40,7 +40,11 @@ $(document).ready(function () {
                     return "<div class=\"row\"><div class=\"col\">" + source.platform + "</div></div><div class=\"row\"><div class=\"col\">" + source.browser + "</div></div>";
                 }, "title": "PLATFORM",
             },
-            { "data": "path", "title": "PATH", },
+            {
+                "data": function (source, type, val) {
+                    return "<div class=\"row\"><div class=\"col\">ref : " + source.referer + "</div></div><div class=\"row\"><div class=\"col\">for : " + source.path + "</div></div>";
+                }, "title": "PATH",
+            },
             {
                 "data": function (source, type, val) {
                     return "<div class=\"row\"><div class=\"col\">" + source.method + "</div></div><div class=\"row\"><div class=\"col\">" + source.ipaddress + "</div></div>";
@@ -77,7 +81,7 @@ $(document).ready(function () {
     });
 
     var timer, delay = 500;
-    $('#ipaddress,#querypath,#queryparam').bind('keydown blur change', function (e) {
+    $('#ipaddress,#querypath,#queryreferer').bind('keydown blur change', function (e) {
         var _this = $(this);
         clearTimeout(timer);
         timer = setTimeout(function () {

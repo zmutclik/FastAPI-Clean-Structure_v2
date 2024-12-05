@@ -76,8 +76,8 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
     if params["search"]["path"] != "":
         query = query.filter(TableLogs.path.like("%" + params["search"]["path"] + "%"))
 
-    if params["search"]["params"] != "":
-        query = query.filter(TableLogs.path_params.like("%" + params["search"]["params"] + "%"))
+    if params["search"]["referer"] != "":
+        query = query.filter(TableLogs.referer.like("%" + params["search"]["referer"] + "%"))
 
     query = query.order_by(TableLogs.id.desc())
 
@@ -93,6 +93,7 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
             "app",
             "platform",
             "browser",
+            "referer",
             "path",
             "method",
             "ipaddress",

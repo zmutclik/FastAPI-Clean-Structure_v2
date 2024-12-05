@@ -12,6 +12,7 @@ class TableLogs(Base):
     app = Column(String(100), index=True)
     platform = Column(String(100), index=True)
     browser = Column(String(100), index=True)
+    referer = Column(String(500), index=True)
     path = Column(String(256), index=True)
     path_params = Column(String(256))
     method = Column(String(10), index=True)
