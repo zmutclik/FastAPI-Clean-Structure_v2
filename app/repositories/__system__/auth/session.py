@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from app.core.db.session import SessionTable as MainTable, SessionEndTable
 from app.core import config
 from app.core.db.session import get_db
+from pydantic import BaseModel
+from typing import Optional, Union
 
 
 class SessionEndRepository:
@@ -17,6 +19,21 @@ class SessionEndRepository:
     def create(self, dataIn: dict):
         data = SessionEndTable(**dataIn)
         self.session.add(data)
+
+
+class SessionSchemas(BaseModel):
+    type: str
+    client_id: str
+    session_id: str
+    username: Optional[str] = ""
+    app: str
+    platform: str
+    browser: str
+    startTime: datetime
+    EndTime: datetime
+    LastPage: Optional[str] = ""
+    ipaddress: Optional[str] = None
+    active: Optional[bool] = True
 
 
 class SessionRepository:
@@ -45,20 +62,20 @@ class SessionRepository:
             return request.client.host
         return ""
 
-    def create(self, request: Request):
-        dataIn = {
-            "client_id": request.state.clientId,
-            "session_id": request.state.sessionId,
-            "username": "",
-            "app": request.state.app,
-            "platform": request.state.platform,
-            "browser": request.state.browser,
-            "startTime": datetime.now(),
-            "EndTime": datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED),
-            "ipaddress": self.ipaddress(request),
-            "active": True,
-        }
-        data = MainTable(**dataIn)
+    def create(self, request: Request, dataIn: Union[SessionSchemas, None] = None):
+        if dataIn is None:
+            dataIn = SessionSchemas(
+                type="page",
+                client_id=request.state.clientId,
+                session_id=request.state.sessionId,
+                app=request.state.app,
+                platform=request.state.platform,
+                browser=request.state.browser,
+                startTime=datetime.now(),
+                EndTime=datetime.now() + timedelta(minutes=config.TOKEN_EXPIRED),
+                ipaddress=self.ipaddress(request),
+            )
+        data = MainTable(**dataIn.model_dump())
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)

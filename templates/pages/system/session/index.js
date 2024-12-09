@@ -25,15 +25,20 @@ $(document).ready(function () {
         "autoWidth": true,
         "responsive": true,
         columns: [
-            { "data": "session_id", "title": "ID", },
+            {
+                "data": function (source, type, val) {
+                    typeses = "<div class=\"row\"><div class=\"col\"><strong>" + source.type + "</strong></div></div>";
+                    if (source.type == 'page') typeses = "";
+                    return "<div class=\"row\"><div class=\"col\">" + source.session_id + "</div></div>" + typeses;
+                }, "title": "TIME",
+            },
             { "data": "username", "title": "USER", },
             { "data": "platform", "title": "PLATFORM", },
             { "data": "browser", "title": "BROWSER", },
             {
                 "data": function (source, type, val) {
-                    return moment(source.startTime, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-                }
-                , "title": "STARTTIME",
+                    return "<div class=\"row\"><div class=\"col\">start : " + moment(source.startTime, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm") + "</div></div><div class=\"row\"><div class=\"col\"> end : " + moment(source.EndTime, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm") + "</div></div>";
+                }, "title": "TIME",
             },
             { "data": "LastPage", "title": "LASTPAGE", },
             { "data": "ipaddress", "title": "IPADDRESS", },
@@ -59,7 +64,7 @@ $(document).ready(function () {
         var nm = $(this).parents('tr').find("td:nth-child(2)").html();
         var idU = $(this).parents('tr').attr('id');
         Swal.fire({
-            title: 'Apakah anda YAKIN ingin menghapus Membunuh Session punya "' + nm + '"?',
+            title: 'Apakah anda YAKIN ingin Membunuh Session punya "' + nm + '" ?',
             showCancelButton: true,
             confirmButtonText: "Ya KILL",
         }).then((result) => {

@@ -24,7 +24,7 @@ class dataLogs(BaseModel):
     session_id: Union[str, None] = None
     platform: str
     browser: str
-    referer: str
+    referer: Union[str, None] = None
     path: str
     path_params: Union[str, None] = None
     method: str

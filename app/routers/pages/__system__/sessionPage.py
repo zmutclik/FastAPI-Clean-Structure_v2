@@ -58,7 +58,7 @@ from datatables import DataTable
 
 @router.post("/{cId}/{sId}/{status}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(params: dict[str, Any], status: str, req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(SessionTable, SessionTable.id.label("DT_RowId"))
+    query = select(SessionTable, SessionTable.id.label("DT_RowId")).order_by(SessionTable.active.desc(),SessionTable.type.desc(),SessionTable.EndTime.desc())
 
     datatable: DataTable = DataTable(
         request_params=params,
@@ -66,6 +66,7 @@ def get_datatables(params: dict[str, Any], status: str, req: req_depends, c_user
         column_names=[
             "DT_RowId",
             "id",
+            "type",
             "session_id",
             "username",
             "platform",

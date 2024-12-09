@@ -92,7 +92,7 @@ def post_login(
     if not userreal:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User atau Password anda Salah.!")
 
-    user_cookie_token(response, user.username, user.list_scope, sess.id)
+    user_cookie_token(response, user.username, user.list_scope, sess.id, sess.client_id, sess.session_id)
 
 
 from app.core import config
